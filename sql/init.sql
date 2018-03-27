@@ -71,20 +71,16 @@ CREATE TABLE plays (
     location varchar(100),
     teamName varchar(100),
     Primary Key (game_date, location),
-    Foreign Key (game_date, location) REFERENCES game
-        ON DELETE CASCADE,
-    Foreign Key (teamName) REFERENCES team
-        ON DELETE SET DEFAULT
-);
+    Foreign Key (game_date, location) REFERENCES game ON DELETE CASCADE,
+    Foreign Key (teamName) REFERENCES team);
 
  
 grant select on plays to public;
  
 CREATE TABLE referee (
-    number int,
+    ref_number int,
     name varchar(50),
-    Primary Key (number)
-);
+    Primary Key (ref_number));
 
  
 grant select on referee to public;
@@ -92,13 +88,10 @@ grant select on referee to public;
 CREATE TABLE referees (
     game_date date,
     location varchar(100),
-    number int,
-    Primary Key (game_date, location, number),
-    Foreign Key (game_date, location) REFERENCES game,
-        ON DELETE CASCADE,
-    Foreign Key (number) REFERENCES referee
-        ON DELETE CASCADE
-);
+    ref_number int,
+    Primary Key (game_date, location, ref_number),
+    Foreign Key (game_date, location) REFERENCES game ON DELETE CASCADE,
+    Foreign Key (ref_number) REFERENCES referee ON DELETE CASCADE);
 
 grant select on referees to public;
 
@@ -108,11 +101,8 @@ CREATE TABLE event (
     game_date date,
     location varchar(100),
     Primary Key (gameTime, playerID, game_date, location),
-    Foreign Key (playerID) REFERENCES player,
-        ON DELETE CASCADE,
-    Foreign Key (game_date, location) REFERENCES game,
-        ON DELETE CASCADE
-);
+    Foreign Key (playerID) REFERENCES player ON DELETE CASCADE,
+    Foreign Key (game_date, location) REFERENCES game ON DELETE CASCADE);
 
 grant select on event to public;
 
@@ -121,15 +111,20 @@ CREATE TABLE penalty (
     playerID int,
     game_date date,
     location varchar(100),
-    number int,
+    ref_number int,
     Primary Key (gameTime, playerID, game_date, location),
-    Foreign Key (gameTime, playerID, game_date, location) REFERENCES event,
-        ON DELETE CASCADE,
-    Foreign Key (number) REFERENCES referee,
-        ON DELETE SET DEFAULT
-);
+    Foreign Key (gameTime, playerID, game_date, location) REFERENCES event ON DELETE CASCADE,
+    Foreign Key (ref_number) REFERENCES referee);
 
 grant select on penalty to public;
+
+CREATE TABLE goal (
+    gameTime varchar(50),
+    playerID int,
+    game_date date,
+    location varchar(100),
+    Primary Key (gameTime, playerID, game_date, location),
+    Foreign Key (gameTime, playerID, game_date, location) REFERENCES event ON DELETE CASCADE);
 
 CREATE TABLE assist (
     gameTime varchar(50),
@@ -138,11 +133,8 @@ CREATE TABLE assist (
     game_date date,
     location varchar(100),
     Primary Key (gameTime, playerID, game_date, location),
-    Foreign Key (gameTime, playerID, game_date, location) REFERENCES event,
-        ON DELETE CASCADE,
-    Foreign Key (gameTime, scoringPlayerID, game_date, location) REFERENCES 
-        goal(gameTime, playerID, game_date. location)
-        ON DELETE CASCADE
+    Foreign Key (gameTime, playerID, game_date, location) REFERENCES event ON DELETE CASCADE,
+    Foreign Key (gameTime, scoringPlayerID, game_date, location) REFERENCES goal(gameTime, playerID, game_date, location) ON DELETE CASCADE
 );
 
 grant select on assist to public;
