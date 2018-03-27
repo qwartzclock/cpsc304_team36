@@ -13,21 +13,29 @@ VALUES(1002, 73, 190, 925000, 'Brock Boeser');
 /* Populating MANAGER table
 */
 
-INSERT INTO MANAGER (MANAGERID,NAME,PHONE,EMAIL,TEAMNAME)
-VALUES (100,'Jim Benning', 6048997400,'jbenning@canucks.com','Canucks');
+INSERT INTO MANAGER (MANAGERID,NAME,PHONE,EMAIL)
+VALUES (100,'Jim Benning', 6048997400,'jbenning@canucks.com');
 
-INSERT INTO MANAGER (MANAGERID,NAME,PHONE,EMAIL,TEAMNAME)
-VALUES(101, 'Kevin Cheveldayoff', 2049877825, 'kcheveldayoff@jets.com', 'Jets');
+INSERT INTO MANAGER (MANAGERID,NAME,PHONE,EMAIL)
+VALUES(101, 'Kevin Cheveldayoff', 2049877825, 'kcheveldayoff@jets.com');
 
 /* Populating TEAM table
 */
 
-INSERT INTO TEAM (TEAMNAME,CITY,MANAGERID)
-VALUES('Canucks', 'Vancouver', 100);
+INSERT INTO TEAM (TEAMNAME,CITY)
+VALUES('Canucks', 'Vancouver');
 
-INSERT INTO TEAM(TEAMNAME,CITY,MANAGERID)
-VALUES('Jets', 'Winnipeg', 101);
+INSERT INTO TEAM (TEAMNAME,CITY)
+VALUES('Jets', 'Winnipeg');
 
+/*Update Manages to add the teams
+*/
+
+INSERT INTO MANAGES (TEAMNAME, MANAGERID)
+VALUES('Canucks',100);
+
+INSERT INTO MANAGES (TEAMNAME, MANAGERID)
+VALUES('Jets',101);
 
 /* Populating PLAYSFOR table
 */
@@ -51,10 +59,10 @@ VALUES (2017-10-12 19:00:00, 'Vancouver');
 */
 
 INSERT INTO PLAYS(GAME_DATE,LOCATION,TEAMNAME)
-VALUES (2017-10-12 19:00:00,'Vancouver','CANUCKS');
+VALUES (2017-10-12 19:00:00,'Vancouver','Canucks');
 
 INSERT INTO PLAYS(GAME_DATE,LOCATION,TEAMNAME)
-VALUES (2017-10-12 19:00:00,'Vancouver','JETS');
+VALUES (2017-10-12 19:00:00,'Vancouver','Jets');
 
 /* Populating REFEREE table
 */

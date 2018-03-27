@@ -24,7 +24,6 @@ grant select on player to public;
 CREATE TABLE team (
     teamName varchar(100),
     city varchar(100),
-    managerID int UNIQUE NOT NULL,
     Primary Key (teamName)
 );
 
@@ -35,15 +34,20 @@ CREATE TABLE manager (
     name varchar(50),
     phone int,
     email varchar(100),
-    teamName varchar(100) UNIQUE,
-    Primary Key (managerID),
-    Foreign Key (teamName) REFERENCES team 
-        ON DELETE SET NULL
+    Primary Key (managerID)
 );
 
 grant select on manager to public;
 
-ALTER TABLE team ADD FOREIGN KEY (managerID) REFERENCES manager (managerID);
+CREATE TABLE manages (
+	teamName varchar(100) UNIQUE NOT NULL,
+	managerID int,
+	Primary Key (managerID),
+	Foreign Key (managerID) REFERENCES manager ON DELETE CASCADE,
+	Foreign Key (teamName) REFERENCES team ON DELETE CASCADE
+);
+
+grant select on manages to public;
 
 CREATE TABLE playsFor (
     PlayerID int,
