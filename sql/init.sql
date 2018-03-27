@@ -35,7 +35,7 @@ CREATE TABLE manager (
     name varchar(50),
     phone int,
     email varchar(100),
-    teamName varchar(100) UNIQUE NOT NULL,
+    teamName varchar(100) UNIQUE,
     Primary Key (managerID),
     Foreign Key (teamName) REFERENCES team 
         ON DELETE SET NULL
