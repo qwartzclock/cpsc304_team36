@@ -1,5 +1,7 @@
 package NHLAnalyzer;
 
+import java.sql.SQLException;
+
 public class Query {
 
     public Query (String query) {
@@ -8,6 +10,7 @@ public class Query {
 
     public static Account tryLogin(String username, String password){
         System.out.println("Attempting to log in with "+username+" and "+password);
+
 
         // TODO: REPLACE THIS WITH A QUERY
         //
@@ -43,13 +46,21 @@ public class Query {
         // 0 - player name
         // 1 - player ID (key)
         // 2
+		Object[][] result = null;
+		try {
+			result = Driver.makeQuery("SELECT PLAYER.NAME, PLAYER.PLAYERID" +
+					" FROM PLAYER " +
+					"WHERE pname LIKE '%" + playerName + "%'");
+		} catch (SQLException e) {
+			// TODO: DO THE ERROR THING
+		}
         Object[][] o = {{"Jonathan Der","id5",},
                 {"Miayaz Nahh","id6"},
               {"Dokidok Iredian","id7"},
               {"Natalia Dddder","id8"},
                {"Noncertified Miayana","id9"}};
 
-        return o;
+        return result;
 
         //
         //
@@ -89,6 +100,15 @@ public class Query {
          [Time, Date, Location, Team 1, Team 2]
 
         */
+
+        Object[] playerInfo = null;
+        try{
+            playerInfo = Driver.makeQuery("SELECT PLAYER.NAME, TEAM.TEAMNAME, PLAYER.HEIGHT, PLAYER.WEIGHT, PLAYER.SALARY\n" +
+		        "  FROM PLAYER, TEAM\n" +
+		        "WHERE PLAYER.PLAYERID = " + playerID)[0];
+        } catch (SQLException e) {
+        	// TODO: DO THE ERROR THING
+        }
         Object game1 = new Object[] {0,0,"Rogers Arena", "Canucks","Oilers"};
         Object game2 = new Object[] {44,5,"Rogers Arena", "Flames","Canucks"};
         Object[] o = {"Jonathan Der","Canucks",2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,game1,game2};
