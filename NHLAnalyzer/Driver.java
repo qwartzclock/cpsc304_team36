@@ -25,7 +25,7 @@ public class Driver {
 		return myDriver;
 	}
 
-	public static void startConnection() throws SQLException{
+	public void startConnection() throws SQLException{
 		try {
 			con = DriverManager.getConnection(
 					"jdbc:oracle:thin:@localhost:1522:ug", "ora_y1u0b", "a31618151");
@@ -38,7 +38,10 @@ public class Driver {
 
 	// For queries only.
 	// Returns a 2D Object array. For Object[i][j], i is the row, j is the column. Beware nulls and data types
-	public static Object[][] makeQuery(String query) throws SQLException {
+	public Object[][] makeQuery(String query) throws SQLException {
+		if (query.endsWith(";")){
+			query = query.substring(0, query.length() - 1);
+		}
 		try {
 			Statement stmt = con.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
@@ -65,7 +68,10 @@ public class Driver {
 	}
 
 	// For CREATE, INSERT, UPDATE, DELETE only.
-	public static void executeUpdate(String update) throws SQLException {
+	public void executeUpdate(String update) throws SQLException {
+		if (update.endsWith(";")){
+			update = update.substring(0, update.length() - 1);
+		}
 		try {
 			Statement stmt = con.createStatement();
 			stmt.executeUpdate(update);
@@ -76,7 +82,7 @@ public class Driver {
 		}
 	}
 
-	public static void closeConnection() {
+	public void closeConnection() {
 		try {
 			con.close();
 		} catch (SQLException e) {

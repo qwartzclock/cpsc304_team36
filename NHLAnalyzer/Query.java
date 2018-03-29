@@ -13,7 +13,7 @@ public class Query {
 
         try{
             String query = "SELECT * FROM user WHERE userName = '" + username + "'";
-            Object[][] answer = Driver.makeQuery(query);
+            Object[][] answer = Driver.getInstance().makeQuery(query);
 
             if(answer.length == 0){
                 System.out.println("No user matching " + username);
@@ -71,7 +71,7 @@ public class Query {
         // 2
 		Object[][] result = null;
 		try {
-			result = Driver.makeQuery("SELECT PLAYER.NAME, PLAYER.PLAYERID" +
+			result = Driver.getInstance().makeQuery("SELECT PLAYER.NAME, PLAYER.PLAYERID" +
 					" FROM PLAYER " +
 					"WHERE pname LIKE '%" + playerName + "%'");
 		} catch (SQLException e) {
@@ -95,6 +95,37 @@ public class Query {
         //
         // Given the player ID, return all data about a player
         //
+
+
+        String q0_4 = "SELECT PLAYER.NAME, T.TEAMNAME, PLAYER.HEIGHT, PLAYER.WEIGHT, PLAYER.SALARY" +
+                "  FROM PLAYER" +
+                "    INNER JOIN PLAYSFOR P ON PLAYER.PLAYERID = P.PLAYERID" +
+                "    INNER JOIN TEAM T ON P.TEAMNAME = T.TEAMNAME" +
+                " WHERE PLAYER.PLAYERID = " + playerID;
+
+        String q11 = "SELECT count(ASSIST.PLAYERID)" +
+                "  FROM ASSIST" +
+                " WHERE ASSIST.PLAYERID = " + playerID;
+
+        // TODO: THIS PROBABLY DOESN'T WORK
+        String q12 = "SELECT COUNT(A.PLAYERID)" +
+                "  FROM ASSIST A" +
+                "    INNER JOIN EVENT E ON A.GAMETIME = E.GAMETIME AND A.PLAYERID = E.PLAYERID AND A.GAME_DATE = E.GAME_DATE AND A.LOCATION = E.LOCATION" +
+                "    INNER JOIN GAME G ON E.GAME_DATE = G.GAME_DATE AND E.LOCATION = G.LOCATION" +
+                "  WHERE A.PLAYERID = " + playerID +
+                "    GROUP BY G.GAME_DATE, G.LOCATION";
+
+        String q7 = "SELECT COUNT(G.PLAYERID)" +
+                "  FROM GOAL G " +
+                "WHERE G.PLAYERID = " + playerID;
+
+        String q8 = "SELECT COUNT(GO.PLAYERID)" +
+                "  FROM GOAL A" +
+                "    INNER JOIN EVENT E ON GO.GAMETIME = E.GAMETIME AND GO.PLAYERID = E.PLAYERID AND GO.GAME_DATE = E.GAME_DATE AND GO.LOCATION = E.LOCATION" +
+                "    INNER JOIN GAME G ON E.GAME_DATE = G.GAME_DATE AND E.LOCATION = G.LOCATION" +
+                "  WHERE GO.PLAYERID = " + playerID +
+                "    GROUP BY G.GAME_DATE, G.LOCATION";
+
         /*
          0 - player name
          1 - team name
@@ -126,8 +157,8 @@ public class Query {
 
         Object[] playerInfo = null;
         try{
-            playerInfo = Driver.makeQuery("SELECT PLAYER.NAME, TEAM.TEAMNAME, PLAYER.HEIGHT, PLAYER.WEIGHT, PLAYER.SALARY\n" +
-		        "  FROM PLAYER, TEAM\n" +
+            playerInfo = Driver.getInstance().makeQuery("SELECT PLAYER.NAME, TEAM.TEAMNAME, PLAYER.HEIGHT, PLAYER.WEIGHT, PLAYER.SALARY\n" +
+		        "  FROM PLAYER, TEAM " +
 		        "WHERE PLAYER.PLAYERID = " + playerID)[0];
         } catch (SQLException e) {
         	// TODO: DO THE ERROR THING
@@ -143,29 +174,6 @@ public class Query {
     }
 
     public static Object[][] searchTeams(String teamName){
-
-        try{
-            String query = "SELECT teamName,  FROM user WHERE userName = '" + username + "'";
-            Object[][] answer = Driver.makeQuery(query);
-
-            if(answer.length == 0){
-                System.out.println("No user matching " + username);
-            }
-            else if(answer.length != 1){
-                System.out.println("Duplicate entry for user " + username);
-            }
-            else{
-                if(password.equals((String)answer[0][1])){
-                    return new Account((int)answer[0][2], (String)answer[0][3], (String)answer[0][4], (String)answer[0][0]);
-                }
-                else{
-                    System.out.println("Password not matching data for user " + username);
-                }
-            }
-        }
-        catch(java.sql.SQLException e){
-            System.out.println("Connection failed");
-        }
 
         //TODO: REPLACE THIS WITH A QUERY
         //
@@ -187,6 +195,8 @@ public class Query {
         //TODO: REPLACE THIS WITH A QUERY
         //
         //
+
+
         // 0 - team name
         // 1 - team location
         // 2 - manager name
@@ -233,6 +243,9 @@ public class Query {
         //
         // Given the game's time, date, place, return all data about a game
         //
+
+        String q0_2 = "SELECT T.teamName, T.city, m.name Manager_Name FROM TEAM T INNER JOIN MANAGES ON T.teamName = manages.teamName INNER JOIN manager m ON manages.managerID = m.managerID";
+
         /*
          0 - Time
          1 - Date
