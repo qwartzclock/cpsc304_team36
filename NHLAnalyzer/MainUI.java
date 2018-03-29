@@ -20,6 +20,13 @@ public class MainUI extends Frame implements WindowListener{
     private TextField teamSearchField;
     private TextField gameSearchField1;
     private TextField gameSearchField2;
+    private TextField gameSearchField3;
+    private TextField gameSearchField4;
+    private TextField gameSearchField5;
+    private TextField gameSearchField6;
+    private TextField gameSearchField7;
+    private TextField gameSearchField8;
+    private TextField gameSearchField9;
     private TextField inputField1;
     private TextField inputField2;
     private TextField sensitiveTeamSearch;
@@ -32,6 +39,12 @@ public class MainUI extends Frame implements WindowListener{
     private Button sensitiveManagerButton;
     private Button sensitiveTeamSearchButton; // Admin only
 
+    private Button gameButton2;
+    private Button gameButton3;
+    private Button gameButton4;
+    private Button gameButton5;
+    private Button gameButton6;
+
     private Account account;
 
 
@@ -39,21 +52,24 @@ public class MainUI extends Frame implements WindowListener{
     public MainUI(Account account){
 
         this.account=account;
-
+        int y = 0;
+        int x = 0;
         int rows = 4;
-        if(account.getSecurityLevel()!=1)
-            rows += 1;
-        if(account.getSecurityLevel()==4)
-            rows += 1;
+        if(account.getSecurityLevel()==1 || account.getSecurityLevel()==4) {
+            rows += 2;
+            y = 120;
+            x = 400;
+        }
+
 
         setLayout(new GridLayout(rows,1));
 
         setTitle("NHL Analyzer");
-        setSize(400,400);
+        setSize(400+x,400+y);
 
         Panel pnlText = new Panel();
         pnlText.setLayout(new FlowLayout());
-        userinfo = new Label("Welcome "+account.username+"! Please select and option.");
+        userinfo = new Label("Welcome "+account.username+"! Please select an option.");
         pnlText.add(userinfo);
 
         add(pnlText);
@@ -109,19 +125,72 @@ public class MainUI extends Frame implements WindowListener{
 
         add(pnlGameSearch);
 
+        // This is for statistcians- the add/delete game function
+        if (account.getSecurityLevel() == 1 || account.getSecurityLevel() == 4) {
+
+            Panel pnlGameAdd = new Panel();
+            pnlGameAdd.setLayout(new FlowLayout());
+            pnlGameAdd.add(new Label("Add game between:"));
+            gameSearchField3 = new TextField(30);
+            pnlGameAdd.add(gameSearchField3);
+            gameSearchField4 = new TextField(30);
+            pnlGameAdd.add(gameSearchField4);
+
+            pnlGameAdd.add(new Label("Time:"));
+
+            gameSearchField7 = new TextField(30);
+            pnlGameAdd.add(gameSearchField7);
+            pnlGameAdd.add(new Label("Date:"));
+            gameSearchField8 = new TextField(30);
+            pnlGameAdd.add(gameSearchField8);
+            pnlGameAdd.add(new Label("Location:"));
+            gameSearchField9 = new TextField(30);
+            pnlGameAdd.add(gameSearchField9);
+
+            gameButton2 = new Button("Add");
+            gameButton2.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent evt) {
+                    gameAdd();
+                }
+            });
+            pnlGameAdd.add(gameButton2);
+
+            add(pnlGameAdd);
+
+
+            Panel pnlGameRemove = new Panel();
+            pnlGameRemove.setLayout(new FlowLayout());
+            pnlGameRemove.add(new Label("Delete game between:"));
+            gameSearchField5 = new TextField(30);
+            pnlGameRemove.add(gameSearchField5);
+            gameSearchField6 = new TextField(30);
+            pnlGameRemove.add(gameSearchField6);
+            gameButton3 = new Button("Delete");
+            gameButton3.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent evt) {
+                    gameRemove();
+                }
+            });
+            pnlGameRemove.add(gameButton3);
+
+            add(pnlGameRemove);
+
+        }
+
+
         addWindowListener(this);
 
         setVisible(true);
     }
 
     public void playerPress(){
-        System.out.println("Player press");
         Object[][] ary = Query.searchPlayers(playerSearchField.getText());
         Main.openOptions(ary,account,0);
     }
 
     public void teamPress(){
-        System.out.println("Team press");
         Object[][] ary = Query.searchTeams(teamSearchField.getText());
         Main.openOptions(ary,account,1);
 
@@ -129,9 +198,22 @@ public class MainUI extends Frame implements WindowListener{
 
 
     public void gamePress(){
-        System.out.println("Game press");
         Object[][] ary = Query.searchGames(gameSearchField1.getText(),gameSearchField2.getText());
         Main.openOptions(ary,account,2);
+
+    }
+
+    public void gameAdd(){
+        //TODO
+        //Object[][] ary = Query.searchGames(gameSearchField1.getText(),gameSearchField2.getText());
+        Main.openAddGame(gameSearchField3.getText(),gameSearchField4.getText(),gameSearchField7.getText(),gameSearchField8.getText(),gameSearchField9.getText(),account);
+
+    }
+
+    public void gameRemove(){
+        //TODO
+        Object[][] ary = Query.searchGames(gameSearchField1.getText(),gameSearchField2.getText());
+        Main.openOptions(ary,account,3);
 
     }
 

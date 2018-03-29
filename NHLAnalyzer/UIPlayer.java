@@ -182,11 +182,18 @@ public class UIPlayer extends UIData {
 
     public void viewGamePress(){
 
+        Object[] game = (Object[])this.list[17+cbList.indexOf(cbg.getSelectedCheckbox())];
+        if(game[0] instanceof Integer){
+            Main.openPlayerTeamGame(Query.getOneGame(((Integer)game[0]).toString(),((Integer)game[1]).toString(),(String)game[2]),
+                    account,
+                    2);
 
-        Main.openPlayerTeamGame(Query.getOnePlayer((String)
-                        this.list[cbList.indexOf(cbg.getSelectedCheckbox())],false),
-                account,
-                2);
+        } else {
+            Main.openPlayerTeamGame(Query.getOneGame(((Integer)game[0]).toString(),((Integer)game[1]).toString(),((Integer)game[2]).toString()),
+                    account,
+                    2);
+
+        }
     }
 
     public void backPress(){

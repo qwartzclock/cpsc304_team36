@@ -22,7 +22,6 @@ public class Main {
             dataFrame.dispose();
         if(optionsFrame!=null)
             optionsFrame.dispose();
-        System.out.println("Logged in succesfully.");
         mainFrame = new MainUI(account);
     }
 
@@ -34,20 +33,41 @@ public class Main {
 
     }
 
+    public static void openAddGame(String name1, String name2, String time, String date, String loc, Account account){
+        mainFrame.dispose();
+        loginFrame.dispose();
+
+        //TODO: need to have a thing that set time date and location
+
+        Object[] data = new Object[]{time,date,loc,name1,name2,0,0,new Object[]{},new Object[][]{},new Object[][]{}};
+        dataFrame = new UIAddGame(data,account);
+    }
+
+    public static void openAddGameNew(Object[] data, Account account){
+        mainFrame.dispose();
+        loginFrame.dispose();
+        dataFrame.dispose();
+        dataFrame = new UIAddGame(data,account);
+    }
+
+
     public static void openPlayerTeamGame(Object[] data, Account account, int waitingFor) {
         optionsFrame.dispose();
        if(dataFrame!=null)
            dataFrame.dispose();
-        System.out.println("Logged in succesfully.");
         if (waitingFor == 0) {
             dataFrame = new UIPlayer(data, account);
         } else if (waitingFor == 1) {
-            dataFrame = new UIPlayer(data, account);
+            dataFrame = new UITeam(data, account);
         } else if (waitingFor == 2) {
-            dataFrame = new UIPlayer(data, account);
+            dataFrame = new UIGame(data, account);
+        } else if (waitingFor == 3) {
+            // Game deletion
+            mainFrame = new MainUI(account);
 
-        }
     }
+
+}
 
     public static void main(String[] args) {
         loginFrame = new LoginUI();

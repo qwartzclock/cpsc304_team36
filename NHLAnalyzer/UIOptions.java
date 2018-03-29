@@ -21,6 +21,7 @@ public class UIOptions extends Frame implements WindowListener{
     // Each of the external arrays represents one relation, each of the internal ones represents its features
     public UIOptions(Object[][] list, Account account, int waitingFor){
 
+        this.waitingFor=waitingFor;
 
         this.account=account;
         this.list=list;
@@ -86,11 +87,38 @@ public class UIOptions extends Frame implements WindowListener{
 
         //TODO ^^^^^^^
 
-        Main.openPlayerTeamGame(Query.getOnePlayer((String)
-                list[cbList.indexOf(cbg.getSelectedCheckbox())][1],allowedSensitive),
-                account,
-                waitingFor);
+       // Main.openPlayerTeamGame(Query.getOnePlayer((String)
+//                        list[cbList.indexOf(cbg.getSelectedCheckbox())][1],allowedSensitive),
+  //              account,
+    //            waitingFor);
+
+        Object[] waiting = Query.getOnePlayer((String)
+                list[cbList.indexOf(cbg.getSelectedCheckbox())][1],allowedSensitive);
+
+        if(waitingFor==1){
+            waiting = Query.getOneTeam((String)
+                    list[cbList.indexOf(cbg.getSelectedCheckbox())][1]);
+        }
+        if(waitingFor==2){
+            Object[] w =list[cbList.indexOf(cbg.getSelectedCheckbox())];
+            waiting = Query.getOneGame(((Integer)w[2]).toString(),((Integer)w[3]).toString(),(String)w[4]);
+            Main.openPlayerTeamGame(waiting,
+                    account,
+                    waitingFor);
+            return;
+
+        }
+        if(waitingFor==3){
+            Object[] w =list[cbList.indexOf(cbg.getSelectedCheckbox())];
+
+            Query.deleteGame(((Integer)w[2]).toString(),((Integer)w[3]).toString(),(String)w[4]);
+            Main.openPlayerTeamGame(null,account,waitingFor);
+            return;
+        }
+
+        Main.openPlayerTeamGame(waiting,account,waitingFor);
     }
+
 
     public void backPress(){
         Main.loginWith(account);

@@ -291,5 +291,37 @@ public class Query {
         //TODO: REPLACE THIS WITH A QUERY
     }
 
+    public static void deleteGame(String time, String date, String location){
+        //TODO
+        //
+        // Replace this with a query that deletes a the game with the local variables as keys
+        // This has cascade deletion- when you delete a game, all the associated events with it are deleted too
+        //
+        // TODO
+    }
+
+    public static void addGame(Object[] data){
+        //TODO
+        //
+        // Replace this with a query that adds
+        /*
+                 0 - Time
+         1 - Date
+         2 - Location
+         3 - Team 1
+         4 - Team 2
+         5 - Team 1 goals
+         6 - Team 2 goals
+         7 - [] <- list of referee's names
+         8 - [] <- List of team 1's players game stats formatted thusly:
+            [player's name, players id/unique key, number of goals, number of assists, number of shots, number of fouls]
+         9 - [] <- List of team 2's players game stats formatted thusly:
+            [player's name, players id/unique key, number of goals, number of assists, number of shots, number of fouls]
+
+         */
+        //
+        // TODO
+    }
+
 
 }

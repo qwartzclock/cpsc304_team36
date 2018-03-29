@@ -21,7 +21,9 @@ public class UIGame extends UIData {
     private Label infoBar6;
     private Label infoBar7;
     private Label infoBar8;
-    private ArrayList<Checkbox> cbList;
+    private ArrayList<Button> buttonList1;
+    private ArrayList<Button> buttonList2;
+
 
     private Object[] list;
 
@@ -34,27 +36,15 @@ public class UIGame extends UIData {
 
         list = data;
 
-        // Playername
-
-        // Team he plays for + VIEW TEAM
-        // Height
-        // Weight
-        // Salary
-
-        // Stats title
-        // Points in history + AVG PER GAME
-        // Goals in history + AVG PER GAME
-        // Shots in history + goals per shot
-        // Assists in history + AVG PER GAME
-        // Fouls in history + AVG PER GAME
-
-        // Sensitive data title
-        // SENSITIVE INFO (IF THIS IS HIM VIEWING INFO ABOUT HIMSELF)
-        // SIN
-        // PHONE #
-
-        // Title name
-        // List of games they participate in + VIEW GAME
+        // "Team 1" vs "Team 2"
+        // Winner: Team x
+        // Score: x-x
+        // Referees: x, x, x
+        // Team 1
+        // Player 1: 5 goals, 3 shots, 2 assists 3 fouls - CLICK TO PLAYER PROFILE
+        // ...
+        // Team 2
+        // Player 1: 5 goals, 3 shots, 2 assists 3 fouls - CLICK TO PLAYER PROFILE
 
         this.account=account;
 
@@ -66,14 +56,15 @@ public class UIGame extends UIData {
 
         Panel pnlText = new Panel();
         pnlText.setLayout(new FlowLayout());
-        infoBar = new Label("Player: "+data[0]);
+        infoBar = new Label(data[3]+" vs. "+data[4]);
         pnlText.add(infoBar);
 
         add(pnlText);
 
         Panel pnlTextTeam = new Panel();
         pnlTextTeam.setLayout(new FlowLayout());
-        infoBarTeam = new Label("Team: "+data[1]);
+        Object winner = (int)data[5] > (int)data[6] ? data[3] : data[4];
+        infoBarTeam = new Label("Winner:  "+winner);
         pnlTextTeam.add(infoBarTeam);
 
         add(pnlTextTeam);
@@ -81,89 +72,83 @@ public class UIGame extends UIData {
 
         Panel pnlText1 = new Panel();
         pnlText1.setLayout(new FlowLayout());
-        infoBar1 = new Label("Total Points: "+data[2] + " (Avg per game: "+data[3]+")");
+        infoBar1 = new Label("Score: "+data[5] + "-"+data[6]);
         pnlText1.add(infoBar1);
 
         add(pnlText1);
 
+        Object[] refAry = (Object[])data[7];
+        String refStr = (String)refAry[0];
+
+        for(int i = 1; i < refAry.length; i++){
+            refStr += ", ";
+            refStr += (String)refAry[i];
+        }
         Panel pnlText2 = new Panel();
         pnlText2.setLayout(new FlowLayout());
-        infoBar2 = new Label("Total Goals: "+data[4] + " (Avg per game: "+data[5]+")");
+        infoBar2 = new Label(data[3]+" Statistics");
         pnlText2.add(infoBar2);
 
         add(pnlText2);
 
+        buttonList1= new ArrayList<Button>();
+        for(int i = 0; i < ((Object[])data[8]).length; i++){
+            Object[] player = ((Object[][])data[8])[i];
+
+            Panel pnlPlayer = new Panel();
+            pnlPlayer.setLayout(new FlowLayout());
+            Label infoBarP = new Label(player[0]+": "+player[1]+" goals, "+player[2]+" assists, "+player[3]+" shots,"+player[4]+" fouls");
+            pnlPlayer.add(infoBarP);
+
+            Button btnPlayer = new Button("View");
+
+            buttonList1.add(btnPlayer);
+            btnPlayer.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent evt) {
+                    int i = buttonList1.indexOf(evt.getSource());
+                    playerPress(false,i);
+                }
+            });
+            pnlPlayer.add(btnPlayer);
+
+
+            add(pnlPlayer);
+
+        }
+
         Panel pnlText3 = new Panel();
         pnlText3.setLayout(new FlowLayout());
-        infoBar3 = new Label("Total Shots: "+data[6] + " (Goals per shot: "+data[7]+")");
+        infoBar3 = new Label(data[4]+" Statistics");
         pnlText3.add(infoBar3);
 
         add(pnlText3);
 
-        Panel pnlText4 = new Panel();
-        pnlText4.setLayout(new FlowLayout());
-        infoBar4 = new Label("Total Assists: "+data[8] + " (Avg per game: "+data[9]+")");
-        pnlText4.add(infoBar4);
+        buttonList2= new ArrayList<Button>();
+        for(int i = 0; i < ((Object[])data[9]).length; i++){
+            Object[] player = ((Object[][])data[9])[i];
 
-        add(pnlText4);
+            Panel pnlPlayer = new Panel();
+            pnlPlayer.setLayout(new FlowLayout());
+            Label infoBarP = new Label(player[0]+": "+player[1]+" goals, "+player[2]+" assists, "+player[3]+" shots,"+player[4]+" fouls");
+            pnlPlayer.add(infoBarP);
 
-        Panel pnlText5 = new Panel();
-        pnlText5.setLayout(new FlowLayout());
-        infoBar5 = new Label("Total Fouls: "+data[10] + " (Avg per game: "+data[11]+")");
-        pnlText5.add(infoBar5);
+            Button btnPlayer = new Button("View");
 
-        add(pnlText5);
-
-        if ((account.getSecurityLevel()==2 && account.getPlayerName()==data[0]) ||
-                (account.getSecurityLevel()==3 && account.getRelatedTeam()==data[1]) ||
-                account.getSecurityLevel()==5){
-
-            //Sensitive data
-
-            Panel pnlText6 = new Panel();
-            pnlText6.setLayout(new FlowLayout());
-            infoBar6 = new Label("SIN/SSN: "+data[12]);
-            pnlText6.add(infoBar6);
-
-            add(pnlText6);
+            buttonList2.add(btnPlayer);
+            btnPlayer.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent evt) {
+                    int i = buttonList2.indexOf(evt.getSource());
+                    playerPress(true,i);
+                }
+            });
+            pnlPlayer.add(btnPlayer);
 
 
-            Panel pnlText7 = new Panel();
-            pnlText7.setLayout(new FlowLayout());
-            infoBar7 = new Label("Phone Number:"+data[13]);
-            pnlText7.add(infoBar7);
-
-            add(pnlText7);
-
+            add(pnlPlayer);
 
         }
-        Panel pnlText8 = new Panel();
-        pnlText8.setLayout(new FlowLayout());
-        infoBar8 = new Label("Games Played:");
-        pnlText8.add(infoBar8);
-
-        add(pnlText8);
-
-
-        cbg = new CheckboxGroup();
-        cbList = new ArrayList<Checkbox>();
-
-        for(Object o : Arrays.copyOfRange(data,17,data.length)){
-            Checkbox cb = new Checkbox(objectToString(o), cbg, true);
-            add(cb);
-            cbList.add(cb);
-
-//            add(new Checkbox(objectToString(o), cbg, true));
-        }
-
-        btnViewGame = new Button("View Game");
-        btnViewGame.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent evt) {
-                viewGamePress();
-            }
-        });
-        add(btnViewGame);
 
         btnBack = new Button("Back");
         btnBack.addActionListener(new ActionListener() {
@@ -180,13 +165,15 @@ public class UIGame extends UIData {
         setVisible(true);
     }
 
-    public void viewGamePress(){
+    public void playerPress(boolean teamTwo, int playerIndex){
 
+        Object[][] team1 = (Object[][])(this.list[8]);
+        if(teamTwo)
+            team1 = (Object[][])(this.list[9]);
 
-        Main.openPlayerTeamGame(Query.getOnePlayer((String)
-                        this.list[cbList.indexOf(cbg.getSelectedCheckbox())],false),
+        Main.openPlayerTeamGame(Query.getOnePlayer((String)team1[playerIndex][1],false),
                 account,
-                2);
+                0);
     }
 
     public void backPress(){
