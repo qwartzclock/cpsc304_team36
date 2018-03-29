@@ -49,6 +49,8 @@ public class Driver {
 			Statement stmt = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 			ResultSet rs = stmt.executeQuery(query);
 
+
+
 			int nCol = rs.getMetaData().getColumnCount();
 			int count = 0;
 			while (rs.next()) {

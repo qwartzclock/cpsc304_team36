@@ -1,5 +1,6 @@
 package NHLAnalyzer;
 
+import java.math.BigDecimal;
 import java.sql.SQLException;
 
 public class Query {
@@ -27,7 +28,7 @@ public class Query {
             }
             else{
                 if(password.equals((String)answer[0][1])){
-                    return new Account((int)answer[0][2], (String)answer[0][3], (String)answer[0][4], (String)answer[0][0]);
+                    return new Account(((BigDecimal)answer[0][2]).intValue(), (String)answer[0][3], (String)answer[0][4], (String)answer[0][0]);
                 }
                 else{
                     System.out.println("Password not matching data for user " + username);
@@ -77,7 +78,7 @@ public class Query {
 		try {
 			result = Driver.getInstance().makeQuery("SELECT PLAYER.NAME, PLAYER.PLAYERID" +
 					" FROM PLAYER " +
-					"WHERE pname LIKE '%" + playerName + "%'");
+					"WHERE UPPER(PLAYER.name) LIKE UPPER('%" + playerName + "%')");
 		} catch (SQLException e) {
 			System.out.println("Error with the query");
 		}
