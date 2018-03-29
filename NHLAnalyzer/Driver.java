@@ -46,21 +46,26 @@ public class Driver {
 			query = query.substring(0, query.length() - 1);
 		}
 		try {
-			Statement stmt = con.createStatement();
+			Statement stmt = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 			ResultSet rs = stmt.executeQuery(query);
 
 			int nCol = rs.getMetaData().getColumnCount();
-			Object[][] resultArr = new Object[rs.getFetchSize()][nCol];
-			while( rs.next()) {
+			int count = 0;
+			while (rs.next()) {
+				count++;
+			}
+			Object[][] resultArr = new Object[count][nCol];
+			rs.first();
+			do {
 				for( int iCol = 1; iCol <= nCol; iCol++ ){
 					Object obj = rs.getObject( iCol );
 					if (obj == null) {
-						resultArr[rs.getRow()][iCol-1] = null;
+						resultArr[rs.getRow()-1][iCol-1] = null;
 					} else {
-						resultArr[rs.getRow()][iCol-1] = obj;
+						resultArr[rs.getRow()-1][iCol-1] = obj;
 					}
 				}
-			}
+			} while( rs.next());
 			stmt.close();
 
 			return resultArr;
