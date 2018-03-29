@@ -21,6 +21,9 @@ public class Driver {
 	public static Driver getInstance() {
 		if (myDriver == null) {
 			myDriver = new Driver();
+			try {
+				myDriver.startConnection();
+			} catch (SQLException e) {System.out.println(e.toString());}
 		}
 		return myDriver;
 	}
