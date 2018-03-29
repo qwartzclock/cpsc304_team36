@@ -212,6 +212,11 @@ VALUES('Canucks',100);
 INSERT INTO MANAGES (TEAMNAME, MANAGERID)
 VALUES('Jets',101);
 
+/*Populating USER table
+*/
+INSERT INTO USER (userName, userPassword, accessLevel, fullName, favTeam)
+VALUES('superMichel','password',1,'Michel Machin','Canucks');
+
 /* Populating PLAYSFOR table
 */
 

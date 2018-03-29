@@ -9,6 +9,7 @@ drop table penalty;
 drop table assist;
 drop table team;
 drop table player;
+drop table user;
 
 CREATE TABLE player (
     PlayerID int,
@@ -28,6 +29,18 @@ CREATE TABLE team (
 );
 
 grant select on team to public;
+
+CREATE TABLE user (
+	userName varchar(100),
+	userPassword varchar(100),
+	accessLevel int,
+	fullName varchar(200),
+	favTeam varchar(100),
+	Primary Key (userName),
+	FOREIGN KEY (favTeam) REFERENCES team (teamName)
+);
+
+grant select on user to public;
  
 CREATE TABLE manager (
     managerID int,

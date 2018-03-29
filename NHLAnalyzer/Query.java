@@ -11,7 +11,30 @@ public class Query {
     public static Account tryLogin(String username, String password){
         System.out.println("Attempting to log in with "+username+" and "+password);
 
+        try{
+            String query = "SELECT * FROM user WHERE userName = '" + username + "'";
+            Object[][] answer = Driver.makeQuery(query);
 
+            if(answer.length == 0){
+                System.out.println("No user matching " + username);
+            }
+            else if(answer.length != 1){
+                System.out.println("Duplicate entry for user " + username);
+            }
+            else{
+                if(password.equals((String)answer[0][1])){
+                    return new Account((int)answer[0][2], (String)answer[0][3], (String)answer[0][4], (String)answer[0][0]);
+                }
+                else{
+                    System.out.println("Password not matching data for user " + username);
+                }
+            }
+        }
+        catch(java.sql.SQLException e){
+            System.out.println("Connection failed");
+        }
+
+        /*
         // TODO: REPLACE THIS WITH A QUERY
         //
         //
@@ -33,7 +56,7 @@ public class Query {
         //
         //
         // TODO: REPLACE ABOVE WITH A QUERY
-
+        */
         return null;
     }
 
