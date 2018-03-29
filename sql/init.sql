@@ -373,7 +373,7 @@ VALUES('Jets',101);
 /* Populating USER table
 */
 INSERT INTO USERS (userName, userPassword, accessLevel, fullName, favTeam)
-VALUES('superMichel','password',1,'Michel Machin','Canucks');
+VALUES('user','password',1,'User Name','Canucks');
 
 /* Populating PLAYSFOR table
 */
