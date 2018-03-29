@@ -75,13 +75,13 @@ public class Query {
 					" FROM PLAYER " +
 					"WHERE pname LIKE '%" + playerName + "%'");
 		} catch (SQLException e) {
-			// TODO: DO THE ERROR THING
+			System.out.println("Error with the query");
 		}
-        Object[][] o = {{"Jonathan Der","id5",},
+        /*Object[][] o = {{"Jonathan Der","id5",},
                 {"Miayaz Nahh","id6"},
               {"Dokidok Iredian","id7"},
               {"Natalia Dddder","id8"},
-               {"Noncertified Miayana","id9"}};
+               {"Noncertified Miayana","id9"}};*/
 
         return result;
 
@@ -143,6 +143,29 @@ public class Query {
     }
 
     public static Object[][] searchTeams(String teamName){
+
+        try{
+            String query = "SELECT teamName,  FROM user WHERE userName = '" + username + "'";
+            Object[][] answer = Driver.makeQuery(query);
+
+            if(answer.length == 0){
+                System.out.println("No user matching " + username);
+            }
+            else if(answer.length != 1){
+                System.out.println("Duplicate entry for user " + username);
+            }
+            else{
+                if(password.equals((String)answer[0][1])){
+                    return new Account((int)answer[0][2], (String)answer[0][3], (String)answer[0][4], (String)answer[0][0]);
+                }
+                else{
+                    System.out.println("Password not matching data for user " + username);
+                }
+            }
+        }
+        catch(java.sql.SQLException e){
+            System.out.println("Connection failed");
+        }
 
         //TODO: REPLACE THIS WITH A QUERY
         //

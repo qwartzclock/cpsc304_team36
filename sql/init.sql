@@ -9,7 +9,9 @@ drop table penalty;
 drop table assist;
 drop table team;
 drop table player;
-drop table user;
+drop table users;
+
+alter session set nls_date_format='yyyy-mm-dd hh24:mi:ss';
 
 CREATE TABLE player (
     PlayerID int,
@@ -30,7 +32,7 @@ CREATE TABLE team (
 
 grant select on team to public;
 
-CREATE TABLE user (
+CREATE TABLE users (
 	userName varchar(100),
 	userPassword varchar(100),
 	accessLevel int,
@@ -40,7 +42,7 @@ CREATE TABLE user (
 	FOREIGN KEY (favTeam) REFERENCES team (teamName)
 );
 
-grant select on user to public;
+grant select on users to public;
  
 CREATE TABLE manager (
     managerID int,
@@ -53,7 +55,7 @@ CREATE TABLE manager (
 grant select on manager to public;
 
 CREATE TABLE manages (
-	teamName varchar(100) UNIQUE NOT NULL,
+	teamName varchar(100),
 	managerID int,
 	Primary Key (managerID),
 	Foreign Key (managerID) REFERENCES manager ON DELETE CASCADE,
@@ -128,10 +130,8 @@ CREATE TABLE penalty (
     playerID int,
     game_date date,
     location varchar(100),
-    ref_number int,
     Primary Key (gameTime, playerID, game_date, location),
-    Foreign Key (gameTime, playerID, game_date, location) REFERENCES event ON DELETE CASCADE,
-    Foreign Key (ref_number) REFERENCES referee);
+    Foreign Key (gameTime, playerID, game_date, location) REFERENCES event ON DELETE CASCADE);
 
 grant select on penalty to public;
 
