@@ -28,7 +28,7 @@ public class Query {
             }
             else{
                 if(password.equals((String)answer[0][1])){
-                    return new Account(((BigDecimal)answer[0][2]).intValue(), (String)answer[0][3], (String)answer[0][4], (String)answer[0][0]);
+                    return new Account(((BigDecimal)answer[0][2]).intValue(), (answer[0][3]).toString(), answer[0][4].toString(), answer[0][0].toString());
                 }
                 else{
                     System.out.println("Password not matching data for user " + username);
@@ -40,9 +40,6 @@ public class Query {
         }
 
         /*
-        // TODO: REPLACE THIS WITH A QUERY
-        //
-        //
         if(username.equals("stats")){
             return new Account(1,"","",username);
         }
@@ -58,9 +55,6 @@ public class Query {
         if(username.equals("")){
             return new Account(0,"","","Guest");
         }
-        //
-        //
-        // TODO: REPLACE ABOVE WITH A QUERY
         */
         return null;
     }
@@ -180,6 +174,21 @@ public class Query {
 
     public static Object[][] searchTeams(String teamName){
 
+        try{
+            String query = "SELECT teamName, city FROM team WHERE UPPER(teamName) like UPPER('%" + teamName + "%')";
+            Object[][] answer = Driver.getInstance().makeQuery(query);
+
+            if(answer.length == 0){
+                System.out.println("No team matching " + teamName);
+            }
+
+            return answer;
+        }
+        catch(java.sql.SQLException e){
+            System.out.println("Connection failed");
+        }
+
+        /*
         //TODO: REPLACE THIS WITH A QUERY
         //
         //
@@ -189,10 +198,12 @@ public class Query {
         {"Oilers","Edmonton",5,1,5,3,2},
         {"Flames","Calgary",16,3,66,22,4}};
         return o;
-
+           */
         //
         //
         //TODO: REPLACE THIS WITH A QUERY
+
+        return null;
     }
 
     public static Object[] getOneTeam(String teamName){
