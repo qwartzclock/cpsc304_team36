@@ -36,11 +36,12 @@ public class Driver {
 		}
 	}
 
+	// For queries only.
+	// Returns a 2D Object array. For Object[i][j], i is the row, j is the column. Beware nulls and data types
 	public static Object[][] makeQuery(String query) throws SQLException {
 		try {
 			Statement stmt = con.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
-
 
 			int nCol = rs.getMetaData().getColumnCount();
 			Object[][] resultArr = new Object[rs.getFetchSize()][nCol];
@@ -59,6 +60,18 @@ public class Driver {
 			return resultArr;
 		} catch (SQLException e) {
 			System.out.println("Driver query error: " + e.toString());
+			throw e;
+		}
+	}
+
+	// For CREATE, INSERT, UPDATE, DELETE only.
+	public static void executeUpdate(String update) throws SQLException {
+		try {
+			Statement stmt = con.createStatement();
+			stmt.executeUpdate(update);
+			System.out.println("Successfully updated");
+		} catch (SQLException e) {
+			System.out.println("Driver update error: " + e.toString());
 			throw e;
 		}
 	}
