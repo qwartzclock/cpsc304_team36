@@ -1,15 +1,18 @@
+drop table assist;
+drop table goal;
+drop table penalty;
+drop table event;
+drop table referees;
+drop table referee;
+drop table plays;
+drop table game;
+drop table manages;
 drop table manager;
 drop table playsFor;
-drop table game;
-drop table plays;
-drop table referee;
-drop table referees;
-drop table event;
-drop table penalty;
-drop table assist;
-drop table team;
 drop table player;
 drop table users;
+drop table team;
+
 
 alter session set nls_date_format='yyyy-mm-dd hh24:mi:ss';
 
@@ -39,7 +42,7 @@ CREATE TABLE users (
 	fullName varchar(200),
 	favTeam varchar(100),
 	Primary Key (userName),
-	FOREIGN KEY (favTeam) REFERENCES team (teamName)
+	FOREIGN KEY (favTeam) REFERENCES team (teamName) ON DELETE SET NULL
 );
 
 grant select on users to public;
@@ -91,7 +94,8 @@ CREATE TABLE plays (
     teamName varchar(100),
     Primary Key (game_date, location, teamName),
     Foreign Key (game_date, location) REFERENCES game ON DELETE CASCADE,
-    Foreign Key (teamName) REFERENCES team);
+    Foreign Key (teamName) REFERENCES team ON DELETE SET NULL
+);
 
  
 grant select on plays to public;
@@ -120,7 +124,7 @@ CREATE TABLE event (
     game_date date,
     location varchar(100),
     Primary Key (gameTime, playerID, game_date, location),
-    Foreign Key (playerID) REFERENCES player ON DELETE CASCADE,
+    Foreign Key (playerID) REFERENCES player ON DELETE SET NULL,
     Foreign Key (game_date, location) REFERENCES game ON DELETE CASCADE);
 
 grant select on event to public;

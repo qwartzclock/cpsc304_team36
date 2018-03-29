@@ -1,7 +1,9 @@
 package NHLAnalyzer;
 
 import java.math.BigDecimal;
+import java.security.PublicKey;
 import java.sql.SQLException;
+import java.util.Arrays;
 
 public class Query {
 
@@ -167,9 +169,6 @@ public class Query {
         Object[] o = {"Jonathan Der","Canucks",2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,game1,game2};
         return o;
 
-        //
-        //
-        //TODO: REPLACE THIS WITH A QUERY
     }
 
     public static Object[][] searchTeams(String teamName){
@@ -187,21 +186,6 @@ public class Query {
         catch(java.sql.SQLException e){
             System.out.println("Connection failed");
         }
-
-        /*
-        //TODO: REPLACE THIS WITH A QUERY
-        //
-        //
-        Object[][] o = {{"Canucks","Vancouver",312,51,42,3,1},
-        {"Maple Leafs","Toronto",51,143,6143,5,4},
-        {"Senators","Ottawa",1,5,5,6,1},
-        {"Oilers","Edmonton",5,1,5,3,2},
-        {"Flames","Calgary",16,3,66,22,4}};
-        return o;
-           */
-        //
-        //
-        //TODO: REPLACE THIS WITH A QUERY
 
         return null;
     }
@@ -303,17 +287,18 @@ public class Query {
     }
 
     public static void deleteGame(String time, String date, String location){
-        //TODO
-        //
-        // Replace this with a query that deletes a the game with the local variables as keys
-        // This has cascade deletion- when you delete a game, all the associated events with it are deleted too
-        //
-        // TODO
+
+        try{
+            String query = "DELETE FROM game WHERE game_date = '" + parseDate(time,date) + "' AND location = '"+ location + "'";
+            Object[][] answer = Driver.getInstance().makeQuery(query);
+            System.out.println(Arrays.deepToString(answer));
+        }
+        catch(java.sql.SQLException e){
+            System.out.println("Connection failed");
+        }
     }
 
     public static void addGame(Object[] data){
-        //TODO
-        //
         // Replace this with a query that adds a game
         // The "data" variable is structured as follows:
 
@@ -331,8 +316,16 @@ public class Query {
 
 
          */
-        //
-        // TODO
+
+        /*Parse the data*/
+        String dateTime = parseDate(data[1].toString(), data[0].toString());
+        String location = data[2].toString();
+        String team1 = data[3].toString();
+        String team2 = data[4].toString();
+    }
+
+    private static String parseDate(String time, String date){
+        return date + " " + time;
     }
 
 
