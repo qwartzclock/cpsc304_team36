@@ -28,7 +28,7 @@ public class Driver {
 	public void startConnection() throws SQLException{
 		try {
 			con = DriverManager.getConnection(
-					"jdbc:oracle:thin:@localhost:1522:ug", "ora_y1u0b", "a31618151");
+					"jdbc:oracle:thin:@dbhost.ugrad.cs.ubc.ca:1521:ug", "ora_k3o1b@ug", "a30971196");
 
 		} catch (SQLException sqle) {
 			System.out.println("Driver open connection error: " + sqle.toString());

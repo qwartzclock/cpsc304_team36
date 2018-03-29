@@ -11,6 +11,10 @@ public class Query {
     public static Account tryLogin(String username, String password){
         System.out.println("Attempting to log in with "+username+" and "+password);
 
+        if(username.equals("")){
+            return new Account(0,"","","Guest");
+        }
+
         try{
             String query = "SELECT * FROM user WHERE userName = '" + username + "'";
             Object[][] answer = Driver.getInstance().makeQuery(query);
