@@ -303,9 +303,11 @@ public class Query {
     public static void addGame(Object[] data){
         //TODO
         //
-        // Replace this with a query that adds
+        // Replace this with a query that adds a game
+        // The "data" variable is structured as follows:
+
         /*
-                 0 - Time
+         0 - Time
          1 - Date
          2 - Location
          3 - Team 1
@@ -313,10 +315,9 @@ public class Query {
          5 - Team 1 goals
          6 - Team 2 goals
          7 - [] <- list of referee's names
-         8 - [] <- List of team 1's players game stats formatted thusly:
-            [player's name, players id/unique key, number of goals, number of assists, number of shots, number of fouls]
-         9 - [] <- List of team 2's players game stats formatted thusly:
-            [player's name, players id/unique key, number of goals, number of assists, number of shots, number of fouls]
+         8 - [] <- List of events  formatted thusly:
+            [gametime, player involved, type]           type is 0, 1, 2, or 3, representing: goal, assist, shot, penalty (respecitvely)
+
 
          */
         //
