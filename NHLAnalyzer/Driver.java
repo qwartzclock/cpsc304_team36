@@ -32,7 +32,6 @@ public class Driver {
 		try {
 
 			con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1522:ug", "ora_k3o1b", "a30971196");
-
 		} catch (SQLException sqle) {
 			System.out.println("Driver open connection error: " + sqle.toString());
 			throw sqle;
@@ -57,6 +56,9 @@ public class Driver {
 				count++;
 			}
 			Object[][] resultArr = new Object[count][nCol];
+			if (count == 0) {
+				return resultArr;
+			}
 			rs.first();
 			do {
 				for( int iCol = 1; iCol <= nCol; iCol++ ){
