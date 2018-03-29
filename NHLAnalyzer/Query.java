@@ -16,7 +16,7 @@ public class Query {
         }
 
         try{
-            String query = "SELECT * FROM user WHERE userName = '" + username + "'";
+            String query = "SELECT * FROM users WHERE userName = '" + username + "'";
             Object[][] answer = Driver.getInstance().makeQuery(query);
 
             if(answer.length == 0){
