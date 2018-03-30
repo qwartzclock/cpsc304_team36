@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class UIOptions extends Frame implements WindowListener{
 
@@ -42,7 +43,14 @@ public class UIOptions extends Frame implements WindowListener{
         cbg = new CheckboxGroup();
         cbList = new ArrayList<Checkbox>();
         for(Object[] o : list){
-            Checkbox cb = new Checkbox(objectToString(o), cbg, true);
+            StringBuilder sb = new StringBuilder();
+            for(Object p : o){
+                sb.append(p);
+                sb.append(", ");
+            }
+            sb.delete(sb.length() - 3, sb.length() -1);
+
+            Checkbox cb = new Checkbox(sb.toString(), cbg, true);
             add(cb);
             cbList.add(cb);
         }

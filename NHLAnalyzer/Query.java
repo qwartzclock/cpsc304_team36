@@ -271,6 +271,40 @@ public class Query {
     }
 
     public static Object[][] searchGames(String team1, String team2){
+
+        try{
+            String query = "SELECT game_date,location FROM game g1 WHERE EXISTS " +
+                    "(SELECT game_date, location FROM plays p1 WHERE UPPER(teamName) LIKE UPPER('%"+team1+"%') AND EXISTS" +
+                    "(SELECT game_date, location FROM plays p2 WHERE UPPER(teamName) LIKE UPPER('%"+team2+"%') AND p1.game_date = p2.game_date AND p1.location = p2.location))";
+            Object[][] answer = Driver.getInstance().makeQuery(query);
+
+            if(answer.length == 0){
+                System.out.println("No game matching between " + team1 + " and " + team2);
+            }
+
+            Object[][] ret = new Object[answer.length][answer[0].length + 2];
+            for(int i = 0; i <answer.length; i++){
+                ret[i][0] = team1;
+                ret[i][1] = team2;
+
+                for(int j = 0; j < answer[i].length; j ++){
+                    ret[i][j+2] = answer[i][j];
+                }
+
+            }
+
+            //System.out.println("to return :" + Arrays.deepToString(ret));
+
+            return ret;
+        }
+        catch(java.sql.SQLException e){
+            System.out.println("Connection failed");
+        }
+
+        return null;
+
+        /*
+        return null;
         //TODO: REPLACE THIS WITH A QUERY
         //
         // This just searches the games for ones matching them (and then one of them will be selected for more data
@@ -293,7 +327,7 @@ public class Query {
         //
         //
         //TODO: REPLACE THIS WITH A QUERY
-
+        */
     }
 
     public static Object[] getOneGame(String time, String date, String location){

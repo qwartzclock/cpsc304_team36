@@ -45,6 +45,9 @@ public class Driver {
 			query = query.substring(0, query.length() - 1);
 		}
 		try {
+
+			//System.out.println("Trying to execute : " + query);
+
 			Statement stmt = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 			ResultSet rs = stmt.executeQuery(query);
 
