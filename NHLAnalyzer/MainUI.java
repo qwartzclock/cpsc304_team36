@@ -139,11 +139,11 @@ public class MainUI extends Frame implements WindowListener{
             gameSearchField4 = new TextField(30);
             pnlGameAdd.add(gameSearchField4);
 
-            pnlGameAdd.add(new Label("Time:"));
+            pnlGameAdd.add(new Label("Time (HH:MM):"));
 
             gameSearchField7 = new TextField(30);
             pnlGameAdd.add(gameSearchField7);
-            pnlGameAdd.add(new Label("Date:"));
+            pnlGameAdd.add(new Label("Date (YYYY-MM-DD):"));
             gameSearchField8 = new TextField(30);
             pnlGameAdd.add(gameSearchField8);
             pnlGameAdd.add(new Label("Location:"));
