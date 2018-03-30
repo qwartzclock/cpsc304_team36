@@ -413,6 +413,106 @@ public class Query {
 
         //String q0_2 = "SELECT T.teamName, T.city, m.name Manager_Name FROM TEAM T INNER JOIN MANAGES ON T.teamName = manages.teamName INNER JOIN manager m ON manages.managerID = m.managerID";
 
+        String q0_4 = "SELECT G.GAME_DATE, G.LOCATION, P.TEAMNAME, P2.TEAMNAME\n" +
+                "FROM GAME G\n" +
+                "  INNER JOIN PLAYS P ON G.GAME_DATE = P.GAME_DATE AND G.LOCATION = P.LOCATION\n" +
+                "  INNER JOIN PLAYS P2 ON G.GAME_DATE = P2.GAME_DATE AND G.LOCATION = P2.LOCATION\n" +
+                "WHERE P.TEAMNAME < P2.TEAMNAME AND G.GAME_DATE = TO_DATE('" + parseDate(time, date) + "', 'YYYY-MM-DD HH24:MI:SS') AND UPPER(G.LOCATION) = UPPER('" + location +"')";
+
+        String q5 = "SELECT G.GAME_DATE, G.LOCATION, P.TEAMNAME, P2.TEAMNAME, COUNT(*)\n" +
+                "  FROM GAME G\n" +
+                "  INNER JOIN PLAYS P ON G.GAME_DATE = P.GAME_DATE AND G.LOCATION = P.LOCATION\n" +
+                "  INNER JOIN PLAYS P2 ON G.GAME_DATE = P2.GAME_DATE AND G.LOCATION = P2.LOCATION\n" +
+                "    INNER JOIN EVENT E ON G.GAME_DATE = E.GAME_DATE AND G.LOCATION = E.LOCATION\n" +
+                "    INNER JOIN GOAL G2 ON E.GAMETIME = G2.GAMETIME AND E.PLAYERID = G2.PLAYERID AND E.GAME_DATE = G2.GAME_DATE AND E.LOCATION = G2.LOCATION\n" +
+                "    INNER JOIN PLAYER P3 ON E.PLAYERID = P3.PLAYERID\n" +
+                "    INNER JOIN PLAYSFOR P4 ON P3.PLAYERID = P4.PLAYERID\n" +
+                "  WHERE P2.TEAMNAME != P.TEAMNAME AND P.TEAMNAME < P2.TEAMNAME\n" +
+                "    AND P.TEAMNAME = P4.TEAMNAME AND G.GAME_DATE = TO_DATE('" + parseDate(time, date) + "', 'YYYY-MM-DD HH24:MI:SS') AND UPPER(G.LOCATION) = UPPER('" + location + "')\n" +
+                "GROUP BY G.GAME_DATE, G.LOCATION, P.TEAMNAME, P2.TEAMNAME";
+
+        String q6 = "SELECT G.GAME_DATE, G.LOCATION, P.TEAMNAME, P2.TEAMNAME, COUNT(*)\n" +
+                "  FROM GAME G\n" +
+                "  INNER JOIN PLAYS P ON G.GAME_DATE = P.GAME_DATE AND G.LOCATION = P.LOCATION\n" +
+                "  INNER JOIN PLAYS P2 ON G.GAME_DATE = P2.GAME_DATE AND G.LOCATION = P2.LOCATION\n" +
+                "    INNER JOIN EVENT E ON G.GAME_DATE = E.GAME_DATE AND G.LOCATION = E.LOCATION\n" +
+                "    INNER JOIN GOAL G2 ON E.GAMETIME = G2.GAMETIME AND E.PLAYERID = G2.PLAYERID AND E.GAME_DATE = G2.GAME_DATE AND E.LOCATION = G2.LOCATION\n" +
+                "    INNER JOIN PLAYER P3 ON E.PLAYERID = P3.PLAYERID\n" +
+                "    INNER JOIN PLAYSFOR P4 ON P3.PLAYERID = P4.PLAYERID\n" +
+                "  WHERE P2.TEAMNAME != P.TEAMNAME AND P.TEAMNAME < P2.TEAMNAME\n" +
+                "    AND P2.TEAMNAME = P4.TEAMNAME AND G.GAME_DATE = TO_DATE('" + parseDate(time, date) + "', 'YYYY-MM-DD HH24:MI:SS') AND UPPER(G.LOCATION) = UPPER('" + location + "')\n" +
+                "GROUP BY G.GAME_DATE, G.LOCATION, P.TEAMNAME, P2.TEAMNAME";
+
+        String q7 = "SELECT R2.NAME\n" +
+                "FROM GAME G\n" +
+                "  INNER JOIN REFEREES R ON G.GAME_DATE = R.GAME_DATE AND G.LOCATION = R.LOCATION\n" +
+                "  INNER JOIN REFEREE R2 ON R.REF_NUMBER = R2.REF_NUMBER\n" +
+                "WHERE G.GAME_DATE = TO_DATE('" + parseDate(time, date) + "', 'YYYY-MM-DD HH24:MI:SS') AND UPPER(G.LOCATION) = UPPER('" + location + "')";
+
+        String q8 = "  SELECT P4.NAME, P4.PLAYERID, COUNT(G2.PLAYERID), COUNT(A2.PLAYERID), COUNT(P5.PLAYERID)\n" +
+                "  FROM GAME G\n" +
+                "    INNER JOIN PLAYS P ON G.GAME_DATE = P.GAME_DATE AND G.LOCATION = P.LOCATION\n" +
+                "    INNER JOIN PLAYS P2 ON G.GAME_DATE = P2.GAME_DATE AND G.LOCATION = P2.LOCATION\n" +
+                "    INNER JOIN TEAM T ON P.TEAMNAME = T.TEAMNAME\n" +
+                "    INNER JOIN PLAYSFOR P3 ON T.TEAMNAME = P3.TEAMNAME\n" +
+                "    INNER JOIN PLAYER P4 ON P3.PLAYERID = P4.PLAYERID\n" +
+                "    LEFT JOIN EVENT E ON P4.PLAYERID = E.PLAYERID\n" +
+                "    LEFT JOIN GOAL G2 ON E.GAMETIME = G2.GAMETIME AND E.PLAYERID = G2.PLAYERID AND E.GAME_DATE = G2.GAME_DATE AND E.LOCATION = G2.LOCATION\n" +
+                "    LEFT JOIN ASSIST A2 ON E.GAMETIME = A2.GAMETIME AND E.PLAYERID = A2.PLAYERID AND E.GAME_DATE = A2.GAME_DATE AND E.LOCATION = A2.LOCATION\n" +
+                "    LEFT JOIN PENALTY P5 ON E.GAMETIME = P5.GAMETIME AND E.PLAYERID = P5.PLAYERID AND E.GAME_DATE = P5.GAME_DATE AND E.LOCATION = P5.LOCATION\n" +
+                "  WHERE P.TEAMNAME < P2.TEAMNAME AND G.GAME_DATE = TO_DATE('" + parseDate(time, date) + "', 'YYYY-MM-DD HH24:MI:SS') AND UPPER(G.LOCATION) = UPPER('" + location + "')\n" +
+                "      GROUP BY P4.NAME, P4.PLAYERID\n" +
+                "ORDER BY P4.PLAYERID";
+
+        String q9 = "SELECT P4.NAME, P4.PLAYERID\n" +
+                "FROM GAME G\n" +
+                "  INNER JOIN PLAYS P ON G.GAME_DATE = P.GAME_DATE AND G.LOCATION = P.LOCATION\n" +
+                "  INNER JOIN PLAYS P2 ON G.GAME_DATE = P2.GAME_DATE AND G.LOCATION = P2.LOCATION\n" +
+                "  INNER JOIN TEAM T ON P2.TEAMNAME = T.TEAMNAME\n" +
+                "  INNER JOIN PLAYSFOR P3 ON T.TEAMNAME = P3.TEAMNAME\n" +
+                "  INNER JOIN PLAYER P4 ON P3.PLAYERID = P4.PLAYERID\n" +
+                "WHERE P.TEAMNAME < P2.TEAMNAME AND G.GAME_DATE = TO_DATE('" + parseDate(time, date) + "', 'YYYY-MM-DD HH24:MI:SS') AND UPPER(G.LOCATION) = UPPER('" + location + "')";
+
+        Object[] rFinal = new Object[9];
+
+        try {
+            Object[] r0_4 = Driver.getInstance().makeQuery(q0_4)[0];
+            rFinal[0] = r0_4[0];
+            rFinal[1] = r0_4[1];
+            rFinal[2] = r0_4[2];
+            rFinal[3] = r0_4[3];
+            rFinal[4] = r0_4[4];
+
+            Object[][] r5a = Driver.getInstance().makeQuery(q5);
+            int r5 = 0;
+            if (r5a.length == 0) { r5 = 0; }
+            else {r5 = ((BigDecimal)r5a[0][4]).intValue();}
+            rFinal[5] = r0_4[5];
+
+            Object[][] r6a = Driver.getInstance().makeQuery(q6);
+            int r6 = 0;
+            if (r6a.length == 0) { r6 = 0; }
+            else {r6 = ((BigDecimal)r6a[0][4]).intValue();}
+            rFinal[6] = r0_4[6];
+
+            Object[][] r7a = Driver.getInstance().makeQuery(q7);
+            Object[] r7 = new Object[r7a.length];
+            for (int i = 0; i < r7a.length; i++) {
+                r7[i] = r7a[i][0];
+            }
+            rFinal[7] = r0_4[7];
+
+            Object[][] r8 = Driver.getInstance().makeQuery(q8);
+            rFinal[8] = r0_4[8];
+            Object[][] r9 = Driver.getInstance().makeQuery(q9);
+            rFinal[9] = r0_4[9];
+
+        } catch (SQLException e) {
+            System.out.println(e.toString());
+        }
+
+        return rFinal;
+
         //String query = "SELECT t1.name, t2.name FROM "
         /*
          0 - Time
@@ -424,24 +524,9 @@ public class Query {
          6 - Team 2 goals
          7 - [] <- list of referee's names
          8 - [] <- List of team 1's players game stats formatted thusly:
-            [player's name, players id/unique key, number of goals, number of assists, number of shots, number of fouls]
+            [player's name, players id/unique key, number of goals, number of assists, number of fouls]
          9 - [] <- List of team 2's players game stats formatted thusly:
-            [player's name, players id/unique key, number of goals, number of assists, number of shots, number of fouls]
-         10 - avg goals per shot
-         11 - total assists
-         12 - avg assists per game
-         13 - total fouls
-         14 - avg fouls per game
-
-         IF SENSITIVE DATA IS ALLOWED
-
-         15 - sin
-         16 - phone
-
-         REGARDLESS
-
-         17 + will be the games they have played in, formatted like:
-         [Time, Date, Location, Team 1, Team 2]
+            [player's name, players id/unique key, number of goals, number of assists, number of fouls]
 
         */
         /*Object game1 = new Object[] {0,0,"Rogers Arena", "Canucks","Oilers"};
@@ -452,8 +537,8 @@ public class Query {
         //
         //
         //TODO: REPLACE THIS WITH A QUERY
-        Object ret[] = {(Object)time, (Object)date, (Object)location,"",""};
-        return ret;
+//        Object ret[] = {(Object)time, (Object)date, (Object)location,"",""};
+//        return ret;
     }
 
     public static void deleteGame(String date, String location){
@@ -493,6 +578,26 @@ public class Query {
         String location = data[2].toString();
         String team1 = data[3].toString();
         String team2 = data[4].toString();
+        String[] refs = (String[]) data[7]; // Oh jesus please let this work
+         if (false){
+                try{
+                    Driver.getInstance().executeUpdate("\n" +
+                        "INSERT INTO GAME(GAME_DATE,LOCATION)\n" +
+                        "VALUES ('" + dateTime + "', '" + location + "')");
+
+                    Driver.getInstance().executeUpdate("INSERT INTO PLAYS(GAME_DATE,LOCATION,TEAMNAME) VALUES" +
+                            " ('" + dateTime + "', '" + location + "','" + team1 + "'");
+
+                    Driver.getInstance().executeUpdate("INSERT INTO PLAYS(GAME_DATE,LOCATION,TEAMNAME) VALUES" +
+                            " ('" + dateTime + "', '" + location + "','" + team2 + "'");
+
+                    Driver.getInstance().executeUpdate("\n" +
+                            "INSERT INTO REFEREES(GAME_DATE, LOCATION, REF_NUMBER)\n" +
+                            "VALUES ('" + dateTime + "', '" + location + "', 7);");
+                } catch (SQLException e) {
+                    System.out.println(e.toString());
+                }
+        }
     }
 
     private static String parseDate(String time, String date){
