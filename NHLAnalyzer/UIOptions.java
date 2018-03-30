@@ -101,7 +101,7 @@ public class UIOptions extends Frame implements WindowListener{
     //            waitingFor);
 
         Object[] waiting = Query.getOnePlayer((String)
-                list[cbList.indexOf(cbg.getSelectedCheckbox())][1],allowedSensitive);
+                list[cbList.indexOf(cbg.getSelectedCheckbox())][1].toString(),allowedSensitive);
 
         if(waitingFor==1){
             waiting = Query.getOneTeam((String)

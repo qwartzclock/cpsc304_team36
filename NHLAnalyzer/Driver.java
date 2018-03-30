@@ -1,5 +1,6 @@
 package NHLAnalyzer;
 
+import javax.swing.*;
 import java.sql.*;
 
 /**
@@ -14,7 +15,8 @@ public class Driver {
 		try {
 			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
 		} catch (SQLException sqle) {
-			System.out.println("Driver constructor error: " + sqle.toString());
+			JOptionPane.showMessageDialog(null, "Driver constructor error: " + sqle.toString(), "Driver Error",
+					JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -23,7 +25,10 @@ public class Driver {
 			myDriver = new Driver();
 			try {
 				myDriver.startConnection();
-			} catch (SQLException e) {System.out.println(e.toString());}
+			} catch (SQLException e) {
+				JOptionPane.showMessageDialog(null, "Connection couldn't be established "+e.toString(), "Driver Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
 		}
 		return myDriver;
 	}
@@ -33,7 +38,8 @@ public class Driver {
 
 			con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1522:ug", "ora_k3o1b", "a30971196");
 		} catch (SQLException sqle) {
-			System.out.println("Driver open connection error: " + sqle.toString());
+			JOptionPane.showMessageDialog(null, "Driver constructor error: " + sqle.toString(), "Driver Error",
+					JOptionPane.ERROR_MESSAGE);
 			throw sqle;
 		}
 	}
@@ -46,7 +52,7 @@ public class Driver {
 		}
 		try {
 
-			//System.out.println("Trying to execute : " + query);
+			System.out.println("Trying to execute : " + query);
 
 			Statement stmt = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 			ResultSet rs = stmt.executeQuery(query);
@@ -77,7 +83,8 @@ public class Driver {
 
 			return resultArr;
 		} catch (SQLException e) {
-			System.out.println("Driver query error: " + e.toString());
+			JOptionPane.showMessageDialog(null, "Driver query error: " + e.toString(), "Driver Error",
+					JOptionPane.ERROR_MESSAGE);
 			throw e;
 		}
 	}
@@ -101,7 +108,8 @@ public class Driver {
 		try {
 			con.close();
 		} catch (SQLException e) {
-			System.out.println("Driver close connection error: " + e.toString());
+			JOptionPane.showMessageDialog(null, "Connection couldn't be closed : " + e.toString(), "Driver Error",
+					JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
