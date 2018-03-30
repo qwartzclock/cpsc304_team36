@@ -34,7 +34,9 @@ public class Query {
             }
             else{
                 if(password.equals((String)answer[0][1])){
-                    return new Account(((BigDecimal)answer[0][2]).intValue(), (answer[0][3]).toString(), answer[0][4].toString(), answer[0][0].toString());
+                    String name = (answer[0][4] == null) ? null : answer[0][4].toString();
+                    String team = (answer[0][3] == null) ? null : answer[0][3].toString();
+                    return new Account(((BigDecimal)answer[0][2]).intValue(), name, team, answer[0][0].toString());
                 }
                 else{
                     JOptionPane.showMessageDialog(null, "Password not matching data for user " + username + ". Please retry", "Log in Error",
@@ -269,7 +271,7 @@ public class Query {
             }
             else{
                 String city = answer[0][1].toString();
-                query = "SELECT mm.name FROM manages m, manager mm, team t WHERE t.teamName = m.teamName ";
+                query = "SELECT mm.name FROM MANAGES m, team t, MANAGER mm WHERE m.MANAGERID = mm.MANAGERID AND t.teamName = m.teamName AND t.teamName = '" + teamName + "'";
                 answer = Driver.getInstance().makeQuery(query);
 
                 if(answer.length == 1) {
@@ -282,7 +284,7 @@ public class Query {
                             "    INNER JOIN PLAYS p2 ON p2.LOCATION = go.LOCATION AND p2.GAME_DATE = go.GAME_DATE\n" +
                             "    INNER JOIN TEAM t1 ON t1.TEAMNAME = p1.TEAMNAME\n" +
                             "    INNER JOIN TEAM t2 ON t2.TEAMNAME = p2.TEAMNAME\n" +
-                            "  WHERE t1.TEAMNAME = '" + teamName + "' and t2.TEAMNAME != t1.TEAMNAME AND t2.TEAMNAME = pf.TEAMNAME AND go.GAME_DATE = g.GAME_DATE AND go.LOCATION = g.LOCATION)\n" +
+                            "  WHERE t1.TEAMNAME = '" + teamName + "' and t2.TEAMNAME != t1.TEAMNAME AND t1.TEAMNAME = pf.TEAMNAME AND go.GAME_DATE = g.GAME_DATE AND go.LOCATION = g.LOCATION)\n" +
                             "   > ANY (SELECT COUNT(*) FROM GOAL go\n" +
                             "  INNER JOIN EVENT e ON e.GAME_DATE = go.GAME_DATE AND e.LOCATION = go.LOCATION AND e.PLAYERID = go.PLAYERID AND e.GAMETIME = go.GAMETIME\n" +
                             "  INNER JOIN PLAYSFOR pf ON go.PLAYERID = pf.PLAYERID\n" +
@@ -290,7 +292,7 @@ public class Query {
                             "  INNER JOIN PLAYS p2 ON p2.LOCATION = go.LOCATION AND p2.GAME_DATE = go.GAME_DATE\n" +
                             "  INNER JOIN TEAM t1 ON t1.TEAMNAME = p1.TEAMNAME\n" +
                             "  INNER JOIN TEAM t2 ON t2.TEAMNAME = p2.TEAMNAME\n" +
-                            "  WHERE t1.TEAMNAME = '" + teamName + "' and t2.TEAMNAME != t1.TEAMNAME AND t1.TEAMNAME = pf.TEAMNAME AND go.GAME_DATE = g.GAME_DATE AND go.LOCATION = g.LOCATION);";
+                            "  WHERE t1.TEAMNAME = '" + teamName + "' and t2.TEAMNAME != t1.TEAMNAME AND t2.TEAMNAME = pf.TEAMNAME AND go.GAME_DATE = g.GAME_DATE AND go.LOCATION = g.LOCATION);";
                     answer = Driver.getInstance().makeQuery(query);
                     int won = ((BigDecimal)answer[0][0]).intValue();
 
@@ -302,7 +304,7 @@ public class Query {
                             "    INNER JOIN PLAYS p2 ON p2.LOCATION = go.LOCATION AND p2.GAME_DATE = go.GAME_DATE\n" +
                             "    INNER JOIN TEAM t1 ON t1.TEAMNAME = p1.TEAMNAME\n" +
                             "    INNER JOIN TEAM t2 ON t2.TEAMNAME = p2.TEAMNAME\n" +
-                            "  WHERE t1.TEAMNAME = '" + teamName + "' and t2.TEAMNAME != t1.TEAMNAME AND t2.TEAMNAME = pf.TEAMNAME AND go.GAME_DATE = g.GAME_DATE AND go.LOCATION = g.LOCATION)\n" +
+                            "  WHERE t1.TEAMNAME = '" + teamName + "' and t2.TEAMNAME != t1.TEAMNAME AND t1.TEAMNAME = pf.TEAMNAME AND go.GAME_DATE = g.GAME_DATE AND go.LOCATION = g.LOCATION)\n" +
                             "   < ANY (SELECT COUNT(*) FROM GOAL go\n" +
                             "  INNER JOIN EVENT e ON e.GAME_DATE = go.GAME_DATE AND e.LOCATION = go.LOCATION AND e.PLAYERID = go.PLAYERID AND e.GAMETIME = go.GAMETIME\n" +
                             "  INNER JOIN PLAYSFOR pf ON go.PLAYERID = pf.PLAYERID\n" +
@@ -310,7 +312,7 @@ public class Query {
                             "  INNER JOIN PLAYS p2 ON p2.LOCATION = go.LOCATION AND p2.GAME_DATE = go.GAME_DATE\n" +
                             "  INNER JOIN TEAM t1 ON t1.TEAMNAME = p1.TEAMNAME\n" +
                             "  INNER JOIN TEAM t2 ON t2.TEAMNAME = p2.TEAMNAME\n" +
-                            "  WHERE t1.TEAMNAME = '" + teamName + "' and t2.TEAMNAME != t1.TEAMNAME AND t1.TEAMNAME = pf.TEAMNAME AND go.GAME_DATE = g.GAME_DATE AND go.LOCATION = g.LOCATION);";
+                            "  WHERE t1.TEAMNAME = '" + teamName + "' and t2.TEAMNAME != t1.TEAMNAME AND t2.TEAMNAME = pf.TEAMNAME AND go.GAME_DATE = g.GAME_DATE AND go.LOCATION = g.LOCATION);";
                     answer = Driver.getInstance().makeQuery(query);
                     int lost = ((BigDecimal)answer[0][0]).intValue();
 
@@ -321,7 +323,14 @@ public class Query {
                     answer = Driver.getInstance().makeQuery(query);
                     Object[][] players = answer;
 
-                    Object ret[] = {teamName, city, manager, won, won/lost, players};
+                    double ratio = 0;
+                    if(lost == 0){
+                        ratio = won;
+                    }
+                    else{
+                        ratio = ((double)won)/lost;
+                    }
+                    Object ret[] = {teamName, city, manager, won, ratio, players};
                     return ret;
 
                 }
@@ -361,9 +370,9 @@ public class Query {
     public static Object[][] searchGames(String team1, String team2){
 
         try{
-            String query = "SELECT game_date,location FROM game g1 WHERE EXISTS " +
-                    "(SELECT game_date, location FROM plays p1 WHERE UPPER(teamName) LIKE UPPER('%"+team1+"%') AND EXISTS" +
-                    "(SELECT game_date, location FROM plays p2 WHERE UPPER(teamName) LIKE UPPER('%"+team2+"%') AND p1.game_date = p2.game_date AND p1.location = p2.location))";
+            String query = "SELECT game_date,location FROM game g1 WHERE (g1.GAME_DATE,g1.LOCATION) IN"
+                            +"(SELECT game_date, location FROM plays p1 WHERE UPPER(teamName) LIKE UPPER('%" +team1 +"%') AND (p1.GAME_DATE,p1.LOCATION) IN"
+                            +"(SELECT game_date, location FROM plays p2 WHERE UPPER(teamName) LIKE UPPER('%" +team2+ "%') AND p1.game_date = p2.game_date AND p1.location = p2.location))";
             Object[][] answer = Driver.getInstance().makeQuery(query);
 
             if(answer.length == 0){
@@ -382,7 +391,7 @@ public class Query {
 
                 }
 
-                //System.out.println("to return :" + Arrays.deepToString(ret));
+                System.out.println(team1 + " " + team2 + "to return :" + Arrays.deepToString(ret));
 
                 return ret;
             }
@@ -402,8 +411,9 @@ public class Query {
         // Given the game's time, date, place, return all data about a game
         //
 
-        String q0_2 = "SELECT T.teamName, T.city, m.name Manager_Name FROM TEAM T INNER JOIN MANAGES ON T.teamName = manages.teamName INNER JOIN manager m ON manages.managerID = m.managerID";
+        //String q0_2 = "SELECT T.teamName, T.city, m.name Manager_Name FROM TEAM T INNER JOIN MANAGES ON T.teamName = manages.teamName INNER JOIN manager m ON manages.managerID = m.managerID";
 
+        //String query = "SELECT t1.name, t2.name FROM "
         /*
          0 - Time
          1 - Date
@@ -434,20 +444,22 @@ public class Query {
          [Time, Date, Location, Team 1, Team 2]
 
         */
-        Object game1 = new Object[] {0,0,"Rogers Arena", "Canucks","Oilers"};
+        /*Object game1 = new Object[] {0,0,"Rogers Arena", "Canucks","Oilers"};
         Object game2 = new Object[] {44,5,"Rogers Arena", "Flames","Canucks"};
         Object[] o = {"Jonathan Der","Canucks",2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,game1,game2};
         return o;
-
+        */
         //
         //
         //TODO: REPLACE THIS WITH A QUERY
+        Object ret[] = {(Object)time, (Object)date, (Object)location,"",""};
+        return ret;
     }
 
-    public static void deleteGame(String time, String date, String location){
+    public static void deleteGame(String date, String location){
 
         try{
-            String query = "DELETE FROM game WHERE game_date = '" + parseDate(time,date) + "' AND location = '"+ location + "'";
+            String query = "DELETE FROM game WHERE game_date = TO_DATE('" + date.substring(0,date.length() - 2) + "','yyyy-mm-dd hh24:mi:ss') AND location = '"+ location + "'";
             Object[][] answer = Driver.getInstance().makeQuery(query);
             System.out.println(Arrays.deepToString(answer));
         }

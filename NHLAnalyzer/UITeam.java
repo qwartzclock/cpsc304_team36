@@ -80,7 +80,7 @@ public class UITeam extends UIData {
 
             Panel pnlPlayer = new Panel();
             pnlPlayer.setLayout(new FlowLayout());
-            Label infoBarP = new Label((String)player[0]);
+            Label infoBarP = new Label(player[0].toString());
             pnlPlayer.add(infoBarP);
 
             Button btnPlayer = new Button("View");

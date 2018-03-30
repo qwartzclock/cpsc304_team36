@@ -251,7 +251,7 @@ public class MainUI extends Frame implements WindowListener{
 
     public void gameRemove(){
         //TODO
-        Object[][] ary = Query.searchGames(gameSearchField1.getText(),gameSearchField2.getText());
+        Object[][] ary = Query.searchGames(gameSearchField5.getText(),gameSearchField6.getText());
         Main.openOptions(ary,account,3);
 
     }

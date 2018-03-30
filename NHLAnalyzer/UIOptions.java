@@ -111,7 +111,7 @@ public class UIOptions extends Frame implements WindowListener{
             waiting = Query.getOnePlayer((String)list[cbList.indexOf(cbg.getSelectedCheckbox())][1],allowedSensitive);
         } else if(waitingFor==1){
             waiting = Query.getOneTeam((String)
-                    list[cbList.indexOf(cbg.getSelectedCheckbox())][1]);
+                    list[cbList.indexOf(cbg.getSelectedCheckbox())][0]);
         } else if(waitingFor==2) {
             Object[] w = list[cbList.indexOf(cbg.getSelectedCheckbox())];
             String time;
@@ -142,7 +142,9 @@ public class UIOptions extends Frame implements WindowListener{
         } else {
             Object[] w =list[cbList.indexOf(cbg.getSelectedCheckbox())];
 
-            Query.deleteGame(((Integer)w[2]).toString(),((Integer)w[3]).toString(),(String)w[4]);
+            System.out.println(Arrays.deepToString(w));
+
+            Query.deleteGame(w[2].toString(), w[3].toString());
             Main.openPlayerTeamGame(null,account,waitingFor);
             return;
         }
