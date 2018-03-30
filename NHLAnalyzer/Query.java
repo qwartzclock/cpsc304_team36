@@ -2,9 +2,10 @@ package NHLAnalyzer;
 
 import javax.swing.*;
 import java.math.BigDecimal;
-import java.security.PublicKey;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class Query {
 
@@ -94,10 +95,10 @@ public class Query {
     }
 
     public static Object[] getOnePlayer(String playerID, boolean sensitive){
+
         //
         // Given the player ID, return all data about a player
         //
-
 
         String q0_4 = "SELECT PLAYER.NAME, T.TEAMNAME, PLAYER.HEIGHT, PLAYER.WEIGHT, PLAYER.SALARY" +
                 "  FROM PLAYER" +
@@ -105,28 +106,91 @@ public class Query {
                 "    INNER JOIN TEAM T ON P.TEAMNAME = T.TEAMNAME" +
                 " WHERE PLAYER.PLAYERID = " + playerID;
 
-        String q11 = "SELECT count(ASSIST.PLAYERID)" +
-                "  FROM ASSIST" +
-                " WHERE ASSIST.PLAYERID = " + playerID;
+        String qtotalAssists =
+                "SELECT COUNT(A.PLAYERID)" +
+                        "  FROM Player P" +
+                        "    LEFT JOIN ASSIST A ON P.PLAYERID = A.PLAYERID" +
+                        "    WHERE P.PLAYERID = " + playerID +
+                        "  GROUP BY P.PLAYERID";
 
-        // TODO: THIS PROBABLY DOESN'T WORK
-        String q12 = "SELECT COUNT(A.PLAYERID)" +
-                "  FROM ASSIST A" +
-                "    INNER JOIN EVENT E ON A.GAMETIME = E.GAMETIME AND A.PLAYERID = E.PLAYERID AND A.GAME_DATE = E.GAME_DATE AND A.LOCATION = E.LOCATION" +
-                "    INNER JOIN GAME G ON E.GAME_DATE = G.GAME_DATE AND E.LOCATION = G.LOCATION" +
-                "  WHERE A.PLAYERID = " + playerID +
-                "    GROUP BY G.GAME_DATE, G.LOCATION";
+        String qtotalGoals =
+                "SELECT COUNT(A.PLAYERID)" +
+                        "  FROM Player P" +
+                        "    LEFT JOIN GOAL A ON P.PLAYERID = A.PLAYERID" +
+                        "    WHERE P.PLAYERID = " + playerID +
+                        "  GROUP BY P.PLAYERID";
 
-        String q7 = "SELECT COUNT(G.PLAYERID)" +
-                "  FROM GOAL G " +
-                "WHERE G.PLAYERID = " + playerID;
+        String qtotalPenalty =
+                "SELECT COUNT(A.PLAYERID)" +
+                        "  FROM Player P" +
+                        "    LEFT JOIN PENALTY A ON P.PLAYERID = A.PLAYERID" +
+                        "    WHERE P.PLAYERID = " + playerID +
+                        "  GROUP BY P.PLAYERID";
 
-        String q8 = "SELECT COUNT(GO.PLAYERID)" +
-                "  FROM GOAL A" +
-                "    INNER JOIN EVENT E ON GO.GAMETIME = E.GAMETIME AND GO.PLAYERID = E.PLAYERID AND GO.GAME_DATE = E.GAME_DATE AND GO.LOCATION = E.LOCATION" +
-                "    INNER JOIN GAME G ON E.GAME_DATE = G.GAME_DATE AND E.LOCATION = G.LOCATION" +
-                "  WHERE GO.PLAYERID = " + playerID +
-                "    GROUP BY G.GAME_DATE, G.LOCATION";
+        String qtotalGames =
+                "SELECT COUNT(*) " +
+                        "  FROM ( " +
+                        "    SELECT DISTINCT G.GAME_DATE, G.LOCATION " +
+                        "      FROM PLAYER P " +
+                        "      INNER JOIN PLAYSFOR PF ON P.PLAYERID = PF.PLAYERID " +
+                        "      INNER JOIN TEAM T ON PF.TEAMNAME = T.TEAMNAME " +
+                        "      INNER JOIN PLAYS P2 ON T.TEAMNAME = P2.TEAMNAME " +
+                        "      INNER JOIN GAME G ON P2.GAME_DATE = G.GAME_DATE AND P2.LOCATION = G.LOCATION " +
+                        "      WHERE P.PLAYERID = " + playerID +
+                        "  )";
+
+        String qGames =
+                "SELECT G.GAME_DATE, G.LOCATION, P2.TEAMNAME, P3.TEAMNAME " +
+                        "    FROM PLAYER P " +
+                        "    INNER JOIN PLAYSFOR PF ON P.PLAYERID = PF.PLAYERID " +
+                        "    INNER JOIN TEAM T ON PF.TEAMNAME = T.TEAMNAME " +
+                        "    INNER JOIN PLAYS P2 ON T.TEAMNAME = P2.TEAMNAME " +
+                        "    INNER JOIN GAME G ON P2.GAME_DATE = G.GAME_DATE AND P2.LOCATION = G.LOCATION " +
+                        "      INNER JOIN PLAYS P3 ON G.GAME_DATE = P3.GAME_DATE AND G.LOCATION = P3.LOCATION " +
+                        "      WHERE P.PLAYERID = " + playerID + " AND NOT P3.TEAMNAME = P2.TEAMNAME";
+
+        List<Object> rFinalList = new ArrayList<>();
+        try {
+            Object[][] r0_4 = Driver.getInstance().makeQuery(q0_4);
+            for (int i = 0; i < r0_4[0].length; i++) {
+                rFinalList.add(r0_4[0][i]);
+            }
+
+            int rtotAssist = ((BigDecimal) Driver.getInstance().makeQuery(qtotalAssists)[0][0]).intValue();
+            int rtotGoals = ((BigDecimal) Driver.getInstance().makeQuery(qtotalGoals)[0][0]).intValue();
+            int rtotPenalty = ((BigDecimal) Driver.getInstance().makeQuery(qtotalPenalty)[0][0]).intValue();
+            int rtotGames = ((BigDecimal) Driver.getInstance().makeQuery(qtotalGoals)[0][0]).intValue();
+            Object[][] rGames = Driver.getInstance().makeQuery(qGames);
+
+            int points = rtotAssist + rtotGoals*2;
+            rFinalList.add(points);
+            rFinalList.add(((float) points) / rtotGoals);
+            rFinalList.add(rtotGoals); // 7
+            rFinalList.add(((float) rtotGoals) / rtotGames); // 8
+            rFinalList.add(null); // 9
+            rFinalList.add(null); // 10
+            rFinalList.add(rtotAssist); // 11
+            rFinalList.add(((float)rtotAssist) / rtotGames); // 12
+            rFinalList.add(rtotPenalty); // 13
+            rFinalList.add(((float) rtotPenalty) / rtotGames); // 14
+
+            if (sensitive) {
+                rFinalList.add(null); // 15
+                rFinalList.add(null); // 16
+            } else {
+                rFinalList.add(null); // 15
+                rFinalList.add(null); // 16
+            }
+
+            for (int i = 0; i < rGames.length; i++) {
+                rFinalList.add(rGames[i]);
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Exception getting player data: " + e);
+        }
+
+        Object[] rFinalArray = rFinalList.toArray();
 
         /*
          0 - player name
@@ -153,23 +217,18 @@ public class Query {
          REGARDLESS
 
          17 + will be the games they have played in, formatted like:
-         [Time, Date, Location, Team 1, Team 2]
+         [DateTime, Location, Team 1, Team 2]
 
         */
 
-        Object[] playerInfo = null;
-        try{
-            playerInfo = Driver.getInstance().makeQuery("SELECT PLAYER.NAME, TEAM.TEAMNAME, PLAYER.HEIGHT, PLAYER.WEIGHT, PLAYER.SALARY\n" +
-		        "  FROM PLAYER, TEAM " +
-		        "WHERE PLAYER.PLAYERID = " + playerID)[0];
-        } catch (SQLException e) {
-        	// TODO: DO THE ERROR THING
-        }
         Object game1 = new Object[] {0,0,"Rogers Arena", "Canucks","Oilers"};
         Object game2 = new Object[] {44,5,"Rogers Arena", "Flames","Canucks"};
         Object[] o = {"Jonathan Der","Canucks",2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,game1,game2};
-        return o;
+        return rFinalArray;
 
+        //
+        //
+        //TODOne: REPLACE THIS WITH A QUERY
     }
 
     public static Object[][] searchTeams(String teamName){
