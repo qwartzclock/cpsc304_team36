@@ -75,7 +75,14 @@ public class UIOptions extends Frame implements WindowListener{
         //TODO:
         // replace this
         // with an actual parser
+        if(waitingFor==2){
+            return obj[0].toString()+" vs. "+obj[1].toString()+" ("+obj[2]+", "+obj[3]+", "+obj[4]+")";
 
+        }
+        if(waitingFor==0){
+            return obj[0].toString()+" ("+obj[1]+")";
+
+        }
         return obj[0].toString();
     }
 
@@ -91,24 +98,41 @@ public class UIOptions extends Frame implements WindowListener{
 //                        list[cbList.indexOf(cbg.getSelectedCheckbox())][1],allowedSensitive),
   //              account,
     //            waitingFor);
+        Object[] waiting;
+        if(waitingFor==0){
+            waiting = Query.getOnePlayer((String)list[cbList.indexOf(cbg.getSelectedCheckbox())][1],allowedSensitive);
 
-        Object[] waiting = Query.getOnePlayer((String)
-                list[cbList.indexOf(cbg.getSelectedCheckbox())][1],allowedSensitive);
-
-        if(waitingFor==1){
+        } else if(waitingFor==1){
             waiting = Query.getOneTeam((String)
                     list[cbList.indexOf(cbg.getSelectedCheckbox())][1]);
-        }
-        if(waitingFor==2){
-            Object[] w =list[cbList.indexOf(cbg.getSelectedCheckbox())];
-            waiting = Query.getOneGame(((Integer)w[2]).toString(),((Integer)w[3]).toString(),(String)w[4]);
+        } else if(waitingFor==2) {
+            Object[] w = list[cbList.indexOf(cbg.getSelectedCheckbox())];
+            String time;
+            String date;
+            String loc;
+
+            if (w[2] instanceof Integer) {
+                time = ((Integer) w[2]).toString();
+            } else {
+                time = (String) w[2];
+            }
+            if (w[3] instanceof Integer) {
+                date = ((Integer) w[2]).toString();
+            } else {
+                date = (String) w[3];
+            }
+            if (w[4] instanceof Integer) {
+                loc = ((Integer) w[4]).toString();
+            } else {
+                loc = (String) w[4];
+            }
+            waiting = Query.getOneGame(time, date, loc);
             Main.openPlayerTeamGame(waiting,
                     account,
                     waitingFor);
             return;
 
-        }
-        if(waitingFor==3){
+        } else {
             Object[] w =list[cbList.indexOf(cbg.getSelectedCheckbox())];
 
             Query.deleteGame(((Integer)w[2]).toString(),((Integer)w[3]).toString(),(String)w[4]);

@@ -52,7 +52,7 @@ public class UIGame extends UIData {
         setLayout(new GridLayout(rows,1));
 
         setTitle("NHL Analyzer");
-        setSize(400,40*rows);
+        setSize(480,40*rows);
 
         Panel pnlText = new Panel();
         pnlText.setLayout(new FlowLayout());
@@ -78,7 +78,13 @@ public class UIGame extends UIData {
         add(pnlText1);
 
         Object[] refAry = (Object[])data[7];
-        String refStr = (String)refAry[0];
+        String refStr;
+        if(refAry.length == 0){
+            refStr = "";
+
+        } else {
+            refStr = (String) refAry[0];
+        }
 
         for(int i = 1; i < refAry.length; i++){
             refStr += ", ";
@@ -130,7 +136,7 @@ public class UIGame extends UIData {
 
             Panel pnlPlayer = new Panel();
             pnlPlayer.setLayout(new FlowLayout());
-            Label infoBarP = new Label(player[0]+": "+player[1]+" goals, "+player[2]+" assists, "+player[3]+" shots,"+player[4]+" fouls");
+            Label infoBarP = new Label(player[0]+": "+player[2]+" goals, "+player[3]+" assists, "+player[4]+" shots,"+player[5]+" fouls");
             pnlPlayer.add(infoBarP);
 
             Button btnPlayer = new Button("View");

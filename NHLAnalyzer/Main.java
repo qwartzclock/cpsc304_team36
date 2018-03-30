@@ -39,7 +39,7 @@ public class Main {
 
         //TODO: need to have a thing that set time date and location
 
-        Object[] data = new Object[]{time,date,loc,name1,name2,0,0,new Object[]{},new Object[][]{},new Object[][]{}};
+        Object[] data = new Object[]{time,date,loc,name1,name2,0,0,new Object[]{},new Object[][]{},new Object[][]{},new Object[]{}};
         dataFrame = new UIAddGame(data,account);
     }
 

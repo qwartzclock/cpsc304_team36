@@ -118,7 +118,7 @@ public class UIAddGame extends UIData {
 
             Panel pnlPlayer = new Panel();
             pnlPlayer.setLayout(new FlowLayout());
-            Label infoBarP = new Label(player[0]+": "+player[1]+" goals, "+player[2]+" assists, "+player[3]+" shots,"+player[4]+" fouls");
+            Label infoBarP = new Label(player[0]+": "+player[2]+" goals, "+player[3]+" assists, "+player[4]+" shots,"+player[5]+" fouls");
             pnlPlayer.add(infoBarP);
 
             add(pnlPlayer);
@@ -155,6 +155,29 @@ public class UIAddGame extends UIData {
 
         }
 
+
+        Button event;
+        event = new Button("Add Event");
+        event.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                    addEventPress();
+            }
+        });
+        add(event);
+
+
+        Button btnSubmit;
+        btnSubmit = new Button("Submit");
+        btnSubmit.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                submitPress();
+            }
+        });
+        add(btnSubmit);
+
+        Button btnBack;
         btnBack = new Button("Back");
         btnBack.addActionListener(new ActionListener() {
             @Override
@@ -163,7 +186,6 @@ public class UIAddGame extends UIData {
             }
         });
         add(btnBack);
-
 
         addWindowListener(this);
 
@@ -181,14 +203,11 @@ public class UIAddGame extends UIData {
                 0);
     }
 
-    public void backPress(){
-        Main.loginWith(account);
-
-    }
 
     public void addPlayerPress(boolean team2){
         int score1 = 0;
         int score2 = 0;
+
         while (1==1){
             String s = (String)JOptionPane.showInputDialog(
                     this,
@@ -200,6 +219,29 @@ public class UIAddGame extends UIData {
                     null);
 
             if(s != null ){
+                //Checks to make sure there's one on the team
+                boolean isInTeam=false;
+                Object[] team = Query.getOneTeam((String)list[3]);//team1
+                if(team2)
+                    team=Query.getOneTeam((String)list[4]);
+                for(int ij = 5; ij < team.length; ij++){
+                    Object[] player = (Object[])team[ij];
+                    if(((String)player[0]).equals(s)){
+                        isInTeam=true;
+                    }
+
+                }
+                if(!isInTeam){
+                    JOptionPane.showMessageDialog(this,
+                            "No player of that name on the team.",
+                            "Error",
+                            JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+
+
+
+
                 Object[][] playerList = Query.searchPlayers(s);
                 String str = "";
                 Object[] player = playerList[0];
@@ -234,12 +276,12 @@ public class UIAddGame extends UIData {
                 if(!team2){
                     Object[][] newAry = new Object[((Object[])list[8]).length+1][];
                     System.arraycopy((Object[])list[8],0,newAry,0,((Object[])list[8]).length);
-                    newAry[((Object[])list[8]).length] = new Object[]{player[0],player[1],0,0,0,0};
+                    newAry[((Object[])list[8]).length] = new Object[]{player[0],player[1],0,0,0,0,new Object[][]{}};
                     list[8]=(Object[][])newAry;
                 } else {
                     Object[][] newAry = new Object[((Object[])list[9]).length+1][];
-                    System.arraycopy((Object[])list[9],0,newAry,0,((Object[])list[9]).length);
-                    newAry[((Object[])list[9]).length] = new Object[]{player[0],player[1],0,0,0,0};
+                        System.arraycopy((Object[])list[9],0,newAry,0,((Object[])list[9]).length);
+                    newAry[((Object[])list[9]).length] = new Object[]{player[0],player[1],0,0,0,0,new Object[][]{}};
                     list[9]=(Object[][])newAry;
                 }
 
@@ -252,6 +294,142 @@ public class UIAddGame extends UIData {
         Main.openAddGameNew(list,account);
 
     }
+
+    public void addEventPress(){
+
+        if(((Object[][])list[9]).length == 0 && ((Object[][])list[8]).length == 0) {
+            JOptionPane.showMessageDialog(this,
+                    "You must have a player to assign the event to.",
+                    "Error",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+            outermost:
+        while (1==1){
+            String str = "";
+
+            Object[][] team1List = (Object[][])list[8];
+            Object[][] team2List = (Object[][])list[9];
+
+            for(Object[] playerTemp : team1List){
+                str+=playerTemp[1];
+                str+=" ";
+            }
+
+            for(Object[] playerTemp : team2List){
+                str+=playerTemp[1];
+                str+=" ";
+            }
+
+            String s = (String)JOptionPane.showInputDialog(
+                    this,
+                    "Which player? Select an ID from: "+str,
+                    "Clarification",
+                    JOptionPane.PLAIN_MESSAGE,
+                    null,
+                    null,
+                    null);
+
+            if(s != null ) {
+                Object[][] playerList = (Object[][])addAll(team1List,team2List);
+                int j = 0;
+                outerloop:
+                for (Object[] playerTemp : playerList) {
+                    if (playerTemp[1].equals(s)) {
+                        Object[] player = playerList[j];
+
+                        //Custom button text
+                        Object[] options = {"Goal",
+                                "Assist",
+                                "Shot",
+                                "Penalty"};
+                        int n = JOptionPane.showOptionDialog(this,
+                                "What sort of event happened?",
+                                "Clarification",
+                                JOptionPane.YES_NO_CANCEL_OPTION,
+                                JOptionPane.QUESTION_MESSAGE,
+                                null,
+                                options,
+                                options[2]);
+
+
+                        //TODO
+                        String gametime = (String)JOptionPane.showInputDialog(
+                                this,
+                                "What was the gametime of the event?",
+                                "Clarification",
+                                JOptionPane.PLAIN_MESSAGE,
+                                null,
+                                null,
+                                null);
+
+                        Object[][] newEvents = new Object[((Object[])list[10]).length+1][];
+                        System.arraycopy(list[10],0,newEvents,0,((Object[])list[10]).length);
+                        newEvents[((Object[])list[10]).length]=new Object[]{gametime, s, n};
+                        list[10]=newEvents;
+
+
+                        //Adds 1 to the player parts of this event
+                        int tempVal = 0;
+                        switch(n) {
+                            case 0:
+                                tempVal = 2;
+                                break;
+                            case 1:
+                                tempVal = 3;
+                                break;
+                            case 2:
+                                tempVal = 4;
+                                break;
+                            case 3:
+                                tempVal = 5;
+                                break;
+                        }
+
+                        if(j>=team1List.length){
+                            j -= team1List.length;
+                            ((Object[])((Object[])list[9])[j])[tempVal] = (Integer)((Object[])((Object[])list[9])[j])[tempVal]+ 1;
+                        }else {
+                            ((Object[])((Object[])list[8])[j])[tempVal] = (Integer)((Object[])((Object[])list[8])[j])[tempVal]+ 1;
+                        }
+
+                        break outermost;
+                    }
+                    j += 1;
+
+                }
+            }
+
+        }
+
+
+
+        Main.openAddGameNew(list,account);
+
+    }
+
+    public Object[][] addAll(Object[][] a, Object[][] b){
+        Object[][] c = new Object[a.length+b.length][];
+        System.arraycopy(a,0,c,0,a.length);
+        System.arraycopy(b,0,c,a.length,b.length);
+        return c;
+    }
+
+
+    public void submitPress(){
+
+        Object[] submitData = new Object[]{list[0],list[1],list[2],list[3],list[4],list[5],list[6],list[7],list[10]};
+/*
+        8/list[10] - [] <- List of events  formatted thusly:
+            [gametime, player involved, type]           type is 0, 1, 2, or 3, representing: goal, assist, shot, penalty (respecitvely)
+*/
+
+        System.out.println(submitData);
+        Query.addGame(submitData);
+        Main.loginWith(account);
+
+    }
+
     public void scorePress(){
         int score1 = 0;
         int score2 = 0;

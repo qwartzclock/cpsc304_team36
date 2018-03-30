@@ -3,6 +3,9 @@ package NHLAnalyzer;
 import java.awt.*;
 import java.awt.event.*;
 
+import javax.swing.JOptionPane;
+
+
 public class MainUI extends Frame implements WindowListener{
 
     private Label userinfo;
@@ -187,26 +190,62 @@ public class MainUI extends Frame implements WindowListener{
 
     public void playerPress(){
         Object[][] ary = Query.searchPlayers(playerSearchField.getText());
-        Main.openOptions(ary,account,0);
+        if(ary.length==0){
+            JOptionPane.showMessageDialog(this,
+                    "Couldn't find any players by that name.",
+                    "Error",
+                    JOptionPane.WARNING_MESSAGE);
+
+        } else {
+            Main.openOptions(ary, account, 0);
+        }
     }
 
     public void teamPress(){
-        Object[][] ary = Query.searchTeams(teamSearchField.getText());
-        Main.openOptions(ary,account,1);
 
+        Object[][] ary = Query.searchTeams(teamSearchField.getText());
+        if(ary.length==0){
+            JOptionPane.showMessageDialog(this,
+                    "Couldn't find any team by that name.",
+                    "Error",
+                    JOptionPane.WARNING_MESSAGE);
+
+        } else {
+            Main.openOptions(ary, account, 1);
+        }
     }
 
 
     public void gamePress(){
-        Object[][] ary = Query.searchGames(gameSearchField1.getText(),gameSearchField2.getText());
-        Main.openOptions(ary,account,2);
+        Object[][] ary = Query.searchGames(gameSearchField1.getText(), gameSearchField2.getText());
+        if(ary.length==0){
+            JOptionPane.showMessageDialog(this,
+                    "Couldn't find any game by that name.",
+                    "Error",
+                    JOptionPane.WARNING_MESSAGE);
+
+        } else {
+            Main.openOptions(ary,account,2);
+
+        }
 
     }
 
     public void gameAdd(){
         //TODO
         //Object[][] ary = Query.searchGames(gameSearchField1.getText(),gameSearchField2.getText());
-        Main.openAddGame(gameSearchField3.getText(),gameSearchField4.getText(),gameSearchField7.getText(),gameSearchField8.getText(),gameSearchField9.getText(),account);
+
+        if(Query.getOneTeam(gameSearchField3.getText()) == null || Query.getOneTeam(gameSearchField4.getText()) == null){
+            JOptionPane.showMessageDialog(this,
+                    "One of those teams does not exist.",
+                    "Error",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }else{
+            Main.openAddGame(gameSearchField3.getText(),gameSearchField4.getText(),gameSearchField7.getText(),gameSearchField8.getText(),gameSearchField9.getText(),account);
+
+        }
+
 
     }
 
