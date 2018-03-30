@@ -1,0 +1,114 @@
+
+
+Short Description of Final Project:
+- Our final schema was essentially the same as the one we turned in.  We added the user table because we found it made sense to store the users alongside the data.
+
+List of all SQL queries
+
+"SELECT * FROM users WHERE userName = '"
+
+"SELECT PLAYER.NAME, PLAYER.PLAYERID" +
+					" FROM PLAYER " +
+					"WHERE UPPER(PLAYER.name) LIKE UPPER('%" + playerName + "%')")
+
+"SELECT PLAYER.NAME, T.TEAMNAME, PLAYER.HEIGHT, PLAYER.WEIGHT, PLAYER.SALARY" +
+                "  FROM PLAYER" +
+                "    INNER JOIN PLAYSFOR P ON PLAYER.PLAYERID = P.PLAYERID" +
+                "    INNER JOIN TEAM T ON P.TEAMNAME = T.TEAMNAME" +
+                " WHERE PLAYER.PLAYERID = " + playerID;
+
+"SELECT COUNT(A.PLAYERID)" +
+                        "  FROM Player P" +
+                        "    LEFT JOIN ASSIST A ON P.PLAYERID = A.PLAYERID" +
+                        "    WHERE P.PLAYERID = " + playerID +
+                        "  GROUP BY P.PLAYERID";
+
+SELECT COUNT(A.PLAYERID)" +
+                        "  FROM Player P" +
+                        "    LEFT JOIN GOAL A ON P.PLAYERID = A.PLAYERID" +
+                        "    WHERE P.PLAYERID = " + playerID +
+                        "  GROUP BY P.PLAYERID";
+
+"SELECT COUNT(A.PLAYERID)" +
+                        "  FROM Player P" +
+                        "    LEFT JOIN PENALTY A ON P.PLAYERID = A.PLAYERID" +
+                        "    WHERE P.PLAYERID = " + playerID +
+                        "  GROUP BY P.PLAYERID";
+
+"SELECT COUNT(*) " +
+                        "  FROM ( " +
+                        "    SELECT DISTINCT G.GAME_DATE, G.LOCATION " +
+                        "      FROM PLAYER P " +
+                        "      INNER JOIN PLAYSFOR PF ON P.PLAYERID = PF.PLAYERID " +
+                        "      INNER JOIN TEAM T ON PF.TEAMNAME = T.TEAMNAME " +
+                        "      INNER JOIN PLAYS P2 ON T.TEAMNAME = P2.TEAMNAME " +
+                        "      INNER JOIN GAME G ON P2.GAME_DATE = G.GAME_DATE AND P2.LOCATION = G.LOCATION " +
+                        "      WHERE P.PLAYERID = " + playerID +
+                        "  )";
+
+"SELECT G.GAME_DATE, G.LOCATION, P2.TEAMNAME, P3.TEAMNAME " +
+                        "    FROM PLAYER P " +
+                        "    INNER JOIN PLAYSFOR PF ON P.PLAYERID = PF.PLAYERID " +
+                        "    INNER JOIN TEAM T ON PF.TEAMNAME = T.TEAMNAME " +
+                        "    INNER JOIN PLAYS P2 ON T.TEAMNAME = P2.TEAMNAME " +
+                        "    INNER JOIN GAME G ON P2.GAME_DATE = G.GAME_DATE AND P2.LOCATION = G.LOCATION " +
+                        "      INNER JOIN PLAYS P3 ON G.GAME_DATE = P3.GAME_DATE AND G.LOCATION = P3.LOCATION " +
+                        "      WHERE P.PLAYERID = " + playerID + " AND NOT P3.TEAMNAME = P2.TEAMNAME";
+
+SELECT teamName, city FROM team WHERE UPPER(teamName) like UPPER('%" + teamName + "%')"
+
+"SELECT teamName, city FROM team WHERE UPPER(teamName) = UPPER('" + teamName + "')"
+
+"SELECT mm.name FROM MANAGES m, team t, MANAGER mm WHERE m.MANAGERID = mm.MANAGERID AND t.teamName = m.teamName AND t.teamName = '" + teamName + "'";
+
+"SELECT COUNT(*) FROM GAME G WHERE\n" +
+                            "  (SELECT COUNT(*) FROM GOAL go\n" +
+                            "    INNER JOIN EVENT e ON e.GAME_DATE = go.GAME_DATE AND e.LOCATION = go.LOCATION AND e.PLAYERID = go.PLAYERID AND e.GAMETIME = go.GAMETIME\n" +
+                            "    INNER JOIN PLAYSFOR pf ON go.PLAYERID = pf.PLAYERID\n" +
+                            "    INNER JOIN PLAYS p1 ON p1.LOCATION = go.LOCATION AND p1.GAME_DATE = go.GAME_DATE\n" +
+                            "    INNER JOIN PLAYS p2 ON p2.LOCATION = go.LOCATION AND p2.GAME_DATE = go.GAME_DATE\n" +
+                            "    INNER JOIN TEAM t1 ON t1.TEAMNAME = p1.TEAMNAME\n" +
+                            "    INNER JOIN TEAM t2 ON t2.TEAMNAME = p2.TEAMNAME\n" +
+                            "  WHERE t1.TEAMNAME = '" + teamName + "' and t2.TEAMNAME != t1.TEAMNAME AND t1.TEAMNAME = pf.TEAMNAME AND go.GAME_DATE = g.GAME_DATE AND go.LOCATION = g.LOCATION)\n" +
+                            "   > ANY (SELECT COUNT(*) FROM GOAL go\n" +
+                            "  INNER JOIN EVENT e ON e.GAME_DATE = go.GAME_DATE AND e.LOCATION = go.LOCATION AND e.PLAYERID = go.PLAYERID AND e.GAMETIME = go.GAMETIME\n" +
+                            "  INNER JOIN PLAYSFOR pf ON go.PLAYERID = pf.PLAYERID\n" +
+                            "  INNER JOIN PLAYS p1 ON p1.LOCATION = go.LOCATION AND p1.GAME_DATE = go.GAME_DATE\n" +
+                            "  INNER JOIN PLAYS p2 ON p2.LOCATION = go.LOCATION AND p2.GAME_DATE = go.GAME_DATE\n" +
+                            "  INNER JOIN TEAM t1 ON t1.TEAMNAME = p1.TEAMNAME\n" +
+                            "  INNER JOIN TEAM t2 ON t2.TEAMNAME = p2.TEAMNAME\n" +
+                            "  WHERE t1.TEAMNAME = '" + teamName + "' and t2.TEAMNAME != t1.TEAMNAME AND t2.TEAMNAME = pf.TEAMNAME AND go.GAME_DATE = g.GAME_DATE AND go.LOCATION = g.LOCATION);";
+
+"SELECT COUNT(*) FROM GAME G WHERE\n" +
+                            "  (SELECT COUNT(*) FROM GOAL go\n" +
+                            "    INNER JOIN EVENT e ON e.GAME_DATE = go.GAME_DATE AND e.LOCATION = go.LOCATION AND e.PLAYERID = go.PLAYERID AND e.GAMETIME = go.GAMETIME\n" +
+                            "    INNER JOIN PLAYSFOR pf ON go.PLAYERID = pf.PLAYERID\n" +
+                            "    INNER JOIN PLAYS p1 ON p1.LOCATION = go.LOCATION AND p1.GAME_DATE = go.GAME_DATE\n" +
+                            "    INNER JOIN PLAYS p2 ON p2.LOCATION = go.LOCATION AND p2.GAME_DATE = go.GAME_DATE\n" +
+                            "    INNER JOIN TEAM t1 ON t1.TEAMNAME = p1.TEAMNAME\n" +
+                            "    INNER JOIN TEAM t2 ON t2.TEAMNAME = p2.TEAMNAME\n" +
+                            "  WHERE t1.TEAMNAME = '" + teamName + "' and t2.TEAMNAME != t1.TEAMNAME AND t1.TEAMNAME = pf.TEAMNAME AND go.GAME_DATE = g.GAME_DATE AND go.LOCATION = g.LOCATION)\n" +
+                            "   < ANY (SELECT COUNT(*) FROM GOAL go\n" +
+                            "  INNER JOIN EVENT e ON e.GAME_DATE = go.GAME_DATE AND e.LOCATION = go.LOCATION AND e.PLAYERID = go.PLAYERID AND e.GAMETIME = go.GAMETIME\n" +
+                            "  INNER JOIN PLAYSFOR pf ON go.PLAYERID = pf.PLAYERID\n" +
+                            "  INNER JOIN PLAYS p1 ON p1.LOCATION = go.LOCATION AND p1.GAME_DATE = go.GAME_DATE\n" +
+                            "  INNER JOIN PLAYS p2 ON p2.LOCATION = go.LOCATION AND p2.GAME_DATE = go.GAME_DATE\n" +
+                            "  INNER JOIN TEAM t1 ON t1.TEAMNAME = p1.TEAMNAME\n" +
+                            "  INNER JOIN TEAM t2 ON t2.TEAMNAME = p2.TEAMNAME\n" +
+                            "  WHERE t1.TEAMNAME = '" + teamName + "' and t2.TEAMNAME != t1.TEAMNAME AND t2.TEAMNAME = pf.TEAMNAME AND go.GAME_DATE = g.GAME_DATE AND go.LOCATION = g.LOCATION);";
+
+
+"SELECT p.NAME, p.PLAYERID FROM PLAYER p\n" +
+                            "INNER JOIN PLAYSFOR pf ON p.PLAYERID = pf.PLAYERID\n" +
+                            "INNER JOIN TEAM t ON pf.TEAMNAME = t.TEAMNAME\n" +
+                            "WHERE t.TEAMNAME = 'Canucks'";
+
+
+"SELECT game_date,location FROM game g1 WHERE (g1.GAME_DATE,g1.LOCATION) IN"
+                            +"(SELECT game_date, location FROM plays p1 WHERE UPPER(teamName) LIKE UPPER('%" +team1 +"%') AND (p1.GAME_DATE,p1.LOCATION) IN"
+                            +"(SELECT game_date, location FROM plays p2 WHERE UPPER(teamName) LIKE UPPER('%" +team2+ "%') AND p1.game_date = p2.game_date AND p1.location = p2.location))";
+
+
+"DELETE FROM game WHERE game_date = TO_DATE('" + date.substring(0,date.length() - 2) + "','yyyy-mm-dd hh24:mi:ss') AND location = '"+ location + "'";
+
+
